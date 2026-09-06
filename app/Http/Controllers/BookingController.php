@@ -25,6 +25,8 @@ class BookingController extends Controller
             'return_date'      => 'nullable|date|after_or_equal:journey_date',
             'transport_type'   => 'required|string|in:bus,train,tour',
             'seats'            => 'required|integer|min:1|max:20',
+            'selected_seats'   => 'nullable|string|max:255',
+            'promo_code'       => 'nullable|string|max:50',
             'room_type'        => 'nullable|string|max:50',
             'accommodation'    => 'nullable|string|max:100',
             'from_city'        => 'nullable|string|max:100',
@@ -58,10 +60,32 @@ class BookingController extends Controller
         }
 
         $seats = (int) $request->seats;
-        $totalPrice = $unitPrice * $seats;
+        $baseTotal = $unitPrice * $seats;
+        $discountAmount = 0.00;
+        $appliedPromo = null;
+
+        // Promo Code Validation & Application
+        if ($request->filled('promo_code')) {
+            $code = strtoupper(trim($request->promo_code));
+            if ($code === 'ADVANCE15') {
+                $appliedPromo = 'ADVANCE15';
+                $discountAmount = round($baseTotal * 0.15, 2);
+            } elseif ($code === 'STUDENT2026') {
+                $appliedPromo = 'STUDENT2026';
+                $discountAmount = round($baseTotal * 0.20, 2);
+            } elseif ($code === 'VIVA500') {
+                $appliedPromo = 'VIVA500';
+                $discountAmount = min($baseTotal, 500.00);
+            }
+        }
+
+        $totalPrice = max(0.00, round($baseTotal - $discountAmount, 2));
 
         // 3. Generate Unique Boarding Pass / Ticket Code
         $bookingCode = 'TKT-' . date('Y') . '-' . strtoupper(Str::random(6));
+
+        // Format seat string if provided
+        $selectedSeats = $request->filled('selected_seats') ? trim($request->selected_seats) : null;
 
         // 4. Save Booking record
         $booking = Booking::create([
@@ -84,7 +108,10 @@ class BookingController extends Controller
             'accommodation'    => $request->accommodation ?? 'Standard',
             'rooms'            => $seats,
             'seats'            => $seats,
+            'selected_seats'   => $selectedSeats,
             'room_type'        => $request->room_type ?? 'Standard Class',
+            'promo_code'       => $appliedPromo,
+            'discount_amount'  => $discountAmount,
             'unit_price'       => $unitPrice,
             'total_price'      => $totalPrice,
             'package_price'    => $unitPrice,
@@ -103,8 +130,13 @@ class BookingController extends Controller
         }
 
         // 5. Redirect straight to checkout/invoice page
+        $successMsg = "Ticket {$bookingCode} booked successfully!";
+        if ($discountAmount > 0) {
+            $successMsg .= " Promo code {$appliedPromo} applied (৳" . number_format($discountAmount, 2) . " discount saved)!";
+        }
+
         return redirect()->route('payment.checkout', $booking->id)
-            ->with('success', "Ticket {$bookingCode} booked successfully! Please complete your payment or review your boarding pass.");
+            ->with('success', $successMsg);
     }
 
     /**
@@ -206,5 +238,22 @@ class BookingController extends Controller
             : 'Your booking has been cancelled successfully.';
 
         return back()->with('success', $msg);
+    }
+
+    /**
+     * Public QR Code & PNR Ticket Verification Portal
+     * Accessible by conductors, inspectors, or travelers scanning the QR code
+     */
+    public function verifyTicket(Request $request, $code = null)
+    {
+        $searchCode = $code ?: $request->query('code');
+        $booking = null;
+
+        if ($searchCode) {
+            $searchCode = strtoupper(trim($searchCode));
+            $booking = Booking::with('package')->where('booking_code', $searchCode)->first();
+        }
+
+        return view('verify_ticket', compact('booking', 'searchCode'));
     }
 }

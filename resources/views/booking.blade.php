@@ -203,16 +203,21 @@
 
                     <!-- Step 3: Seats & Class -->
                     <div class="bg-white rounded-4 border p-4 shadow-sm mb-4">
-                        <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
-                            <div class="brand-icon-box" style="width: 32px; height: 32px; font-size: 1.1rem;">
-                                <i class='bx bx-chair'></i>
+                        <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="brand-icon-box" style="width: 32px; height: 32px; font-size: 1.1rem;">
+                                    <i class='bx bx-chair'></i>
+                                </div>
+                                <h5 class="fw-bold mb-0">3. Seats & Cabin Class</h5>
                             </div>
-                            <h5 class="fw-bold mb-0">3. Seats & Cabin Class</h5>
+                            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 small">
+                                Interactive Coach Map
+                            </span>
                         </div>
 
-                        <div class="row g-3">
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label">Allocated Seats / Passengers <span class="text-danger">*</span></label>
+                                <label class="form-label">Passenger Count <span class="text-danger">*</span></label>
                                 <select name="seats" class="form-select" id="seatsSelect" required>
                                     @for($i = 1; $i <= 10; $i++)
                                         <option value="{{ $i }}" {{ old('seats', 1) == $i ? 'selected' : '' }}>
@@ -237,6 +242,103 @@
                                 <textarea name="additional" rows="2" class="form-control" placeholder="Luggage details, window seat preference, or boarding station notes...">{{ old('additional') }}</textarea>
                             </div>
                         </div>
+
+                        <!-- Interactive Coach Seat Map Section -->
+                        <div class="seat-picker-container p-3 p-md-4 rounded-4 bg-light border">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-0">Select Your Specific Seat(s)</h6>
+                                    <small class="text-secondary">Click on any available seat to reserve your preferred position.</small>
+                                </div>
+                                <!-- Seat Map Legend -->
+                                <div class="d-flex align-items-center gap-3 small">
+                                    <div class="d-flex align-items-center gap-1.5">
+                                        <span class="seat-legend-box seat-available"></span>
+                                        <span class="text-muted">Available</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1.5">
+                                        <span class="seat-legend-box seat-selected"></span>
+                                        <span class="fw-semibold text-primary">Selected</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1.5">
+                                        <span class="seat-legend-box seat-booked"></span>
+                                        <span class="text-muted">Occupied</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hidden input storing comma-separated seat labels -->
+                            <input type="hidden" name="selected_seats" id="selectedSeatsInput" value="{{ old('selected_seats', '') }}">
+
+                            <!-- Coach Graphic Wrapper -->
+                            <div class="coach-wrapper mx-auto p-3 p-md-4 bg-white rounded-4 border shadow-xs" style="max-width: 440px;">
+                                <!-- Driver Cabin Header -->
+                                <div class="driver-cabin d-flex justify-content-between align-items-center px-3 py-2 bg-light rounded-3 mb-3 border text-muted small">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <i class='bx bx-wind text-info'></i>
+                                        <span>Front Windscreen</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1 text-dark fw-bold">
+                                        <i class='bx bx-circle text-primary'></i>
+                                        <span>Driver Cabin</span>
+                                    </div>
+                                </div>
+
+                                <!-- Seat Grid 2x2 with Aisle -->
+                                <div class="seat-grid d-flex flex-column gap-2" id="seatGridContainer">
+                                    @php
+                                        $rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+                                        $occupiedSeats = ['A3', 'B2', 'C4', 'E1', 'G3', 'H2']; // authentic demo booked seats
+                                    @endphp
+
+                                    @foreach($rows as $row)
+                                        <div class="seat-row d-flex justify-content-between align-items-center">
+                                            <!-- Left Pair (Window & Aisle) -->
+                                            <div class="d-flex gap-2">
+                                                @php $s1 = $row . '1'; @endphp
+                                                <button type="button" class="seat-btn {{ in_array($s1, $occupiedSeats) ? 'occupied' : 'available' }}" data-seat="{{ $s1 }}" title="Seat {{ $s1 }} (Window)">
+                                                    {{ $s1 }}
+                                                </button>
+
+                                                @php $s2 = $row . '2'; @endphp
+                                                <button type="button" class="seat-btn {{ in_array($s2, $occupiedSeats) ? 'occupied' : 'available' }}" data-seat="{{ $s2 }}" title="Seat {{ $s2 }} (Aisle)">
+                                                    {{ $s2 }}
+                                                </button>
+                                            </div>
+
+                                            <!-- Aisle Walkway -->
+                                            <div class="aisle-spacer text-muted font-monospace small" style="font-size: 0.65rem;">
+                                                <i class='bx bx-walk text-secondary opacity-50'></i>
+                                            </div>
+
+                                            <!-- Right Pair (Aisle & Window) -->
+                                            <div class="d-flex gap-2">
+                                                @php $s3 = $row . '3'; @endphp
+                                                <button type="button" class="seat-btn {{ in_array($s3, $occupiedSeats) ? 'occupied' : 'available' }}" data-seat="{{ $s3 }}" title="Seat {{ $s3 }} (Aisle)">
+                                                    {{ $s3 }}
+                                                </button>
+
+                                                @php $s4 = $row . '4'; @endphp
+                                                <button type="button" class="seat-btn {{ in_array($s4, $occupiedSeats) ? 'occupied' : 'available' }}" data-seat="{{ $s4 }}" title="Seat {{ $s4 }} (Window)">
+                                                    {{ $s4 }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Live Selected Seats Feedback -->
+                            <div class="mt-3 p-2.5 rounded-3 bg-white border d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                <div class="small text-secondary">
+                                    <span>Selected Seat(s):</span>
+                                    <span class="fw-bold text-primary ms-1" id="selectedSeatsDisplay">Auto-Allocated</span>
+                                </div>
+                                <button type="button" class="btn btn-link btn-sm p-0 text-muted small text-decoration-none" id="btnClearSeats">
+                                    <i class='bx bx-refresh me-1'></i>Reset Map
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -255,14 +357,46 @@
                             <span class="fw-semibold text-dark" id="displaySeatCount">1 Seat</span>
                         </div>
 
+                        <div class="d-flex justify-content-between text-secondary small mb-2" id="summarySeatsRow" style="display: none !important;">
+                            <span>Chosen Seat(s)</span>
+                            <span class="badge bg-primary text-white" id="summarySeatsBadge">None</span>
+                        </div>
+
                         <div class="d-flex justify-content-between text-secondary small mb-2">
                             <span>Online Reservation Fee</span>
                             <span class="text-success fw-bold">FREE (৳0)</span>
                         </div>
 
+                        <!-- Promo Code Discount Row (Hidden initially) -->
+                        <div class="d-flex justify-content-between text-success small mb-2" id="discountRow" style="display: none;">
+                            <span id="discountLabel">Promo Discount</span>
+                            <span class="fw-bold" id="discountAmountDisplay">-৳0.00</span>
+                        </div>
+
                         <div class="d-flex justify-content-between text-secondary small mb-3 pb-3 border-bottom">
                             <span>Applicable Taxes & VAT</span>
                             <span class="fw-semibold text-dark">৳0.00</span>
+                        </div>
+
+                        <!-- Interactive Promo Code Engine Card -->
+                        <div class="p-3 rounded-3 bg-light border mb-3">
+                            <label class="form-label small fw-bold text-dark d-flex align-items-center gap-1 mb-1">
+                                <i class='bx bxs-discount text-primary'></i> Have a Promo Code?
+                            </label>
+                            <div class="input-group input-group-sm mb-1.5">
+                                <input type="text" class="form-control text-uppercase font-monospace" id="promoCodeInput" placeholder="e.g. STUDENT2026" autocomplete="off">
+                                <button type="button" class="btn btn-dark px-3 fw-semibold" id="btnApplyPromo">Apply</button>
+                            </div>
+                            <div id="promoFeedback" class="small mt-1" style="font-size: 0.725rem;"></div>
+
+                            <!-- Sample Demo Promo Pills for Examiner/User Convenience -->
+                            <div class="d-flex flex-wrap gap-1 mt-2">
+                                <span class="badge bg-white border text-secondary coupon-pill" style="cursor: pointer;" onclick="fillPromo('STUDENT2026')">🎓 STUDENT2026 (-20%)</span>
+                                <span class="badge bg-white border text-secondary coupon-pill" style="cursor: pointer;" onclick="fillPromo('ADVANCE15')">🚀 ADVANCE15 (-15%)</span>
+                                <span class="badge bg-white border text-secondary coupon-pill" style="cursor: pointer;" onclick="fillPromo('VIVA500')">🎁 VIVA500 (-৳500)</span>
+                            </div>
+                            <!-- Hidden input passed to server -->
+                            <input type="hidden" name="promo_code" id="appliedPromoCode" value="{{ old('promo_code') }}">
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -305,6 +439,18 @@
 
 @push('scripts')
 <script>
+    let selectedSeats = [];
+    let appliedPromo = null;
+    let discountAmount = 0;
+
+    function fillPromo(code) {
+        const input = document.getElementById('promoCodeInput');
+        if (input) {
+            input.value = code;
+            document.getElementById('btnApplyPromo').click();
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         const seatsSelect = document.getElementById('seatsSelect');
         const hiddenUnitPrice = document.getElementById('hiddenUnitPrice');
@@ -312,24 +458,185 @@
         const totalPriceDisplay = document.getElementById('totalPriceDisplay');
         const journeyDate = document.getElementById('journeyDate');
         const returnDate = document.getElementById('returnDate');
+        const seatBtns = document.querySelectorAll('.seat-btn:not(.occupied)');
+        const selectedSeatsInput = document.getElementById('selectedSeatsInput');
+        const selectedSeatsDisplay = document.getElementById('selectedSeatsDisplay');
+        const summarySeatsRow = document.getElementById('summarySeatsRow');
+        const summarySeatsBadge = document.getElementById('summarySeatsBadge');
+        const btnClearSeats = document.getElementById('btnClearSeats');
+        const btnApplyPromo = document.getElementById('btnApplyPromo');
+        const promoCodeInput = document.getElementById('promoCodeInput');
+        const promoFeedback = document.getElementById('promoFeedback');
+        const discountRow = document.getElementById('discountRow');
+        const discountLabel = document.getElementById('discountLabel');
+        const discountAmountDisplay = document.getElementById('discountAmountDisplay');
+        const appliedPromoCode = document.getElementById('appliedPromoCode');
+
+        // Parse any old values
+        if (selectedSeatsInput.value) {
+            selectedSeats = selectedSeatsInput.value.split(',').map(s => s.trim()).filter(Boolean);
+            renderSelectedSeats();
+        }
+
+        function calculateDiscount(baseTotal) {
+            if (!appliedPromo) return 0;
+            if (appliedPromo === 'ADVANCE15') {
+                return baseTotal * 0.15;
+            } else if (appliedPromo === 'STUDENT2026') {
+                return baseTotal * 0.20;
+            } else if (appliedPromo === 'VIVA500') {
+                return Math.min(baseTotal, 500);
+            }
+            return 0;
+        }
 
         function updateTotal() {
             const seats = parseInt(seatsSelect.value) || 1;
             const unitPrice = parseFloat(hiddenUnitPrice.value) || 1000;
-            const total = seats * unitPrice;
+            const baseTotal = seats * unitPrice;
+
+            discountAmount = calculateDiscount(baseTotal);
+            const netTotal = Math.max(0, baseTotal - discountAmount);
 
             if (displaySeatCount) {
                 displaySeatCount.innerText = `${seats} ${seats === 1 ? 'Seat' : 'Seats'}`;
             }
+
+            if (discountRow) {
+                if (discountAmount > 0) {
+                    discountRow.style.display = 'flex';
+                    discountLabel.innerText = `Discount (${appliedPromo})`;
+                    discountAmountDisplay.innerText = `-৳${discountAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                } else {
+                    discountRow.style.display = 'none';
+                }
+            }
+
             if (totalPriceDisplay) {
-                totalPriceDisplay.innerText = `৳${total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                totalPriceDisplay.innerText = `৳${netTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             }
         }
 
-        if (seatsSelect) {
-            seatsSelect.addEventListener('change', updateTotal);
+        function renderSelectedSeats() {
+            // Update button visual styles
+            seatBtns.forEach(btn => {
+                const seat = btn.getAttribute('data-seat');
+                if (selectedSeats.includes(seat)) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+
+            // Update displays
+            if (selectedSeats.length > 0) {
+                selectedSeatsInput.value = selectedSeats.join(', ');
+                selectedSeatsDisplay.innerText = selectedSeats.join(', ');
+                if (summarySeatsRow && summarySeatsBadge) {
+                    summarySeatsRow.style.removeProperty('display');
+                    summarySeatsBadge.innerText = selectedSeats.join(', ');
+                }
+            } else {
+                selectedSeatsInput.value = '';
+                selectedSeatsDisplay.innerText = 'Auto-Allocated';
+                if (summarySeatsRow) {
+                    summarySeatsRow.style.setProperty('display', 'none', 'important');
+                }
+            }
         }
 
+        // Seat Click Handler
+        seatBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const seat = this.getAttribute('data-seat');
+                const allowedCount = parseInt(seatsSelect.value) || 1;
+
+                if (selectedSeats.includes(seat)) {
+                    // Deselect
+                    selectedSeats = selectedSeats.filter(s => s !== seat);
+                } else {
+                    // If we haven't reached selected count, add
+                    if (selectedSeats.length < allowedCount) {
+                        selectedSeats.push(seat);
+                    } else if (allowedCount === 1) {
+                        // If single passenger, replace seat
+                        selectedSeats = [seat];
+                    } else {
+                        // Increase passenger count automatically up to 10!
+                        if (allowedCount < 10) {
+                            seatsSelect.value = allowedCount + 1;
+                            selectedSeats.push(seat);
+                            updateTotal();
+                        } else {
+                            alert(`Maximum ${allowedCount} seats allowed for this booking.`);
+                            return;
+                        }
+                    }
+                }
+
+                // If user selected more seats than select dropdown, increase dropdown
+                if (selectedSeats.length > allowedCount && selectedSeats.length <= 10) {
+                    seatsSelect.value = selectedSeats.length;
+                    updateTotal();
+                }
+
+                renderSelectedSeats();
+            });
+        });
+
+        // Clear Seats
+        if (btnClearSeats) {
+            btnClearSeats.addEventListener('click', function() {
+                selectedSeats = [];
+                renderSelectedSeats();
+            });
+        }
+
+        // Seats Select Dropdown Change
+        if (seatsSelect) {
+            seatsSelect.addEventListener('change', function() {
+                const count = parseInt(this.value);
+                if (selectedSeats.length > count) {
+                    selectedSeats = selectedSeats.slice(0, count);
+                    renderSelectedSeats();
+                }
+                updateTotal();
+            });
+        }
+
+        // Promo Code Application
+        if (btnApplyPromo) {
+            btnApplyPromo.addEventListener('click', function() {
+                const code = promoCodeInput.value.trim().toUpperCase();
+                if (!code) {
+                    promoFeedback.innerHTML = '<span class="text-danger">Please enter a promo code.</span>';
+                    return;
+                }
+
+                if (code === 'ADVANCE15') {
+                    appliedPromo = 'ADVANCE15';
+                    appliedPromoCode.value = 'ADVANCE15';
+                    promoFeedback.innerHTML = '<span class="text-success fw-bold"><i class="bx bx-check-circle"></i> 15% Discount Applied!</span>';
+                } else if (code === 'STUDENT2026') {
+                    appliedPromo = 'STUDENT2026';
+                    appliedPromoCode.value = 'STUDENT2026';
+                    promoFeedback.innerHTML = '<span class="text-success fw-bold"><i class="bx bx-check-circle"></i> 20% University Student Discount Applied!</span>';
+                } else if (code === 'VIVA500') {
+                    appliedPromo = 'VIVA500';
+                    appliedPromoCode.value = 'VIVA500';
+                    promoFeedback.innerHTML = '<span class="text-success fw-bold"><i class="bx bx-check-circle"></i> ৳500 Flat Capstone Discount Applied!</span>';
+                } else {
+                    promoFeedback.innerHTML = '<span class="text-danger"><i class="bx bx-error-circle"></i> Invalid coupon. Try STUDENT2026 or ADVANCE15</span>';
+                    appliedPromo = null;
+                    appliedPromoCode.value = '';
+                }
+
+                updateTotal();
+            });
+        }
+
+        // Date synchronizer
         if (journeyDate && returnDate) {
             journeyDate.addEventListener('change', function() {
                 returnDate.min = this.value;
@@ -338,6 +645,9 @@
                 }
             });
         }
+
+        // Initial total calculation
+        updateTotal();
     });
 </script>
 @endpush

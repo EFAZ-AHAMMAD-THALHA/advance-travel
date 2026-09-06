@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\PackageController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,9 @@ Route::get('/locations', [PageController::class, 'locations'])->name('locations'
 Route::get('/info', [PageController::class, 'info'])->name('info');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact-message', [ContactMessageController::class, 'store'])->name('contact.store');
+
+// Public Ticket & Boarding Pass QR Verification Portal
+Route::get('/verify-ticket/{code?}', [BookingController::class, 'verifyTicket'])->name('booking.verify');
 
 /*
 |--------------------------------------------------------------------------
@@ -62,7 +66,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/ticket/{booking}', [BookingController::class, 'showTicket'])->name('booking.ticket');
     Route::post('/booking/{booking}/cancel', [BookingController::class, 'cancel'])->name('booking.cancel');
 
-    // 3. Checkout & Payment Initiation
+    // 3. User Profile & Account Settings
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // 4. Checkout & Payment Initiation
     Route::get('/payment', function () {
         return redirect()->route('my.bookings');
     })->name('payment');
@@ -71,7 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pay-now', [SslCommerzPaymentController::class, 'payNow'])->name('payment.pay');
     Route::post('/payment/cash/{booking}', [SslCommerzPaymentController::class, 'cashOnBoarding'])->name('payment.cash');
 
-    // 4. Logout
+    // 5. Logout
     Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 });
 

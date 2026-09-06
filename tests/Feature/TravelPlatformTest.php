@@ -381,4 +381,113 @@ class TravelPlatformTest extends TestCase
         $this->assertEquals('requested', $booking->refund_status);
         $this->assertEquals('Cancelled by passenger', $booking->cancellation_reason);
     }
+
+    /** 14. Test Seat Selection & Promo Code Discount Engine */
+    public function test_booking_with_selected_seats_and_promo_discount(): void
+    {
+        $response = $this->actingAs($this->traveler)->post(route('booking.store'), [
+            'firstname'      => 'Rakib',
+            'lastname'       => 'Hasan',
+            'email'          => 'rakib@travel.com',
+            'phone'          => '01711223344',
+            'journey_date'   => Carbon::tomorrow()->toDateString(),
+            'transport_type' => 'bus',
+            'package_id'     => $this->busService->id, // price 1600
+            'seats'          => 2,
+            'selected_seats' => 'A1, A2',
+            'promo_code'     => 'STUDENT2026', // 20% discount
+            'room_type'      => 'AC Business Class',
+        ]);
+
+        $booking = Booking::where('email', 'rakib@travel.com')->latest()->first();
+        $this->assertNotNull($booking);
+        $this->assertEquals('A1, A2', $booking->selected_seats);
+        $this->assertEquals('STUDENT2026', $booking->promo_code);
+        $this->assertEquals(640.00, (float)$booking->discount_amount); // 20% of 3200
+        $this->assertEquals(2560.00, (float)$booking->total_price); // 3200 - 640
+        $response->assertRedirect(route('payment.checkout', $booking->id));
+        $response->assertSessionHas('success');
+    }
+
+    /** 15. Test Public Ticket Verification Portal & QR Code Lookup */
+    public function test_public_ticket_verification(): void
+    {
+        $booking = Booking::create([
+            'user_id'        => $this->traveler->id,
+            'booking_code'   => 'TKT-VERIFY-999',
+            'transport_type' => 'bus',
+            'passenger_name' => 'Thalha Traveler',
+            'firstname'      => 'Thalha',
+            'email'          => 'thalha@travel.com',
+            'phone'          => '01812345678',
+            'journey_date'   => Carbon::tomorrow()->toDateString(),
+            'from_city'      => 'Dhaka',
+            'to_city'        => 'Sylhet',
+            'seats'          => 2,
+            'selected_seats' => 'B1, B2',
+            'unit_price'     => 1200.00,
+            'total_price'    => 2400.00,
+            'status'         => 'confirmed',
+            'payment_status' => 'paid',
+        ]);
+
+        // Blank portal
+        $responseBlank = $this->get(route('booking.verify'));
+        $responseBlank->assertOk();
+        $responseBlank->assertSee('Official Ticket Verification Portal');
+
+        // Valid Ticket Query
+        $responseValid = $this->get(route('booking.verify', 'TKT-VERIFY-999'));
+        $responseValid->assertOk();
+        $responseValid->assertSee('AUTHENTIC', false);
+        $responseValid->assertSee('VALID BOARDING PASS', false);
+        $responseValid->assertSee('Thalha Traveler');
+        $responseValid->assertSee('B1, B2');
+
+        // Invalid Ticket Query
+        $responseInvalid = $this->get(route('booking.verify', ['code' => 'TKT-NON-EXISTENT']));
+        $responseInvalid->assertOk();
+        $responseInvalid->assertSee('No Ticket Record Found');
+    }
+
+    /** 16. Test Traveler Profile and Password Management */
+    public function test_user_profile_management_and_password_update(): void
+    {
+        // 1. View Profile
+        $response = $this->actingAs($this->traveler)->get(route('profile'));
+        $response->assertOk();
+        $response->assertSee('Account & Traveler Settings', false);
+        $response->assertSee($this->traveler->name);
+
+        // 2. Update Profile Details
+        $updateResponse = $this->actingAs($this->traveler)->put(route('profile.update'), [
+            'name'              => 'Efaz Updated Profile',
+            'phone'             => '01799887766',
+            'address'           => 'Banani, Dhaka',
+            'emergency_contact' => '01811223344',
+        ]);
+        $updateResponse->assertSessionHas('success');
+
+        $this->traveler->refresh();
+        $this->assertEquals('Efaz Updated Profile', $this->traveler->name);
+        $this->assertEquals('01799887766', $this->traveler->phone);
+        $this->assertEquals('Banani, Dhaka', $this->traveler->address);
+        $this->assertEquals('01811223344', $this->traveler->emergency_contact);
+
+        // 3. Password Update with wrong current password should fail
+        $badPasswordResponse = $this->actingAs($this->traveler)->put(route('profile.password'), [
+            'current_password'      => 'wrongpassword',
+            'password'              => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ]);
+        $badPasswordResponse->assertSessionHasErrors('current_password');
+
+        // 4. Password Update with correct current password
+        $goodPasswordResponse = $this->actingAs($this->traveler)->put(route('profile.password'), [
+            'current_password'      => 'password123',
+            'password'              => 'newsecurepass123',
+            'password_confirmation' => 'newsecurepass123',
+        ]);
+        $goodPasswordResponse->assertSessionHas('success');
+    }
 }

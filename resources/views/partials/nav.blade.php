@@ -96,6 +96,12 @@
                                     <span>My Booked Tickets</span>
                                 </a>
                             </li>
+                            <li>
+                                <a class="dropdown-item rounded-3 py-2 fw-medium d-flex align-items-center gap-2 text-dark" href="{{ route('profile') }}">
+                                    <i class='bx bx-user-circle fs-5 text-secondary'></i>
+                                    <span>Profile & Settings</span>
+                                </a>
+                            </li>
                             @if(auth()->user()->is_admin)
                                 <li>
                                     <a class="dropdown-item rounded-3 py-2 fw-medium d-flex align-items-center gap-2 text-warning" href="{{ route('admin.dashboard') }}">

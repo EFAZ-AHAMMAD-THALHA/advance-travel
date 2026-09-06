@@ -28,7 +28,10 @@ class Booking extends Model
         'accommodation',
         'rooms',
         'seats',
+        'selected_seats',
         'room_type',
+        'promo_code',
+        'discount_amount',
         'unit_price',
         'total_price',
         'status',
@@ -49,6 +52,7 @@ class Booking extends Model
         'check_in_date' => 'date',
         'check_out_date' => 'date',
         'unit_price' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
         'total_price' => 'decimal:2',
         'package_price' => 'decimal:2',
     ];
