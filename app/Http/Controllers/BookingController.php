@@ -60,7 +60,21 @@ class BookingController extends Controller
         }
 
         $seats = (int) $request->seats;
-        $baseTotal = $unitPrice * $seats;
+        $isRoundTrip = ($request->input('trip_mode') === 'roundtrip') || ($request->filled('return_date') && $request->input('trip_mode') !== 'oneway');
+
+        $returnDate = $request->return_date;
+        // For tour packages, if return date is not set, default return date to 3 days after journey date
+        if ($request->transport_type === 'tour' && empty($returnDate)) {
+            $returnDate = Carbon::parse($request->journey_date)->addDays(3)->toDateString();
+        }
+
+        // Calculate base price (bus/train round trips count outbound + return tickets)
+        if ($request->transport_type !== 'tour' && $isRoundTrip) {
+            $baseTotal = $unitPrice * $seats * 2;
+        } else {
+            $baseTotal = $unitPrice * $seats;
+        }
+
         $discountAmount = 0.00;
         $appliedPromo = null;
 
@@ -99,9 +113,9 @@ class BookingController extends Controller
             'email'            => $request->email,
             'phone'            => $request->phone,
             'journey_date'     => $request->journey_date,
-            'return_date'      => $request->return_date,
+            'return_date'      => $returnDate,
             'check_in_date'    => $request->journey_date, // backward compatibility
-            'check_out_date'   => $request->return_date ?? $request->journey_date,
+            'check_out_date'   => $returnDate ?? $request->journey_date,
             'from_city'        => $fromCity,
             'to_city'          => $toCity,
             'destination'      => $toCity,

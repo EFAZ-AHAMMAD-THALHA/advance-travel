@@ -78,6 +78,22 @@
                         </div>
 
                         <div class="row g-3">
+                            <!-- Trip Mode Selector (One Way vs Round Trip / Return Ticket) -->
+                            <div class="col-12 mb-1">
+                                <label class="form-label d-block text-secondary small fw-semibold">Journey Type & Return Ticket Option</label>
+                                <div class="btn-group w-100" role="group" aria-label="Trip Type">
+                                    <input type="radio" class="btn-check" name="trip_mode" id="tripOneWay" value="oneway" {{ empty(old('return_date')) ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary py-2 fw-semibold" for="tripOneWay">
+                                        <i class='bx bx-right-arrow-alt me-1'></i>One-Way Journey
+                                    </label>
+
+                                    <input type="radio" class="btn-check" name="trip_mode" id="tripRoundTrip" value="roundtrip" {{ !empty(old('return_date')) ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary py-2 fw-semibold" for="tripRoundTrip">
+                                        <i class='bx bx-refresh me-1'></i>Round-Trip (Include Return Ticket)
+                                    </label>
+                                </div>
+                            </div>
+
                             <div class="col-md-4">
                                 <label class="form-label">Transport Category <span class="text-danger">*</span></label>
                                 <select name="transport_type" class="form-select" id="transportTypeSelect" required>
@@ -145,15 +161,29 @@
                                        min="{{ date('Y-m-d') }}"
                                        value="{{ old('journey_date', date('Y-m-d')) }}" required>
                                 <div class="text-muted small mt-1" style="font-size: 0.75rem;">
-                                    <i class='bx bx-info-circle me-1'></i>Today or upcoming dates permitted
+                                    <i class='bx bx-info-circle me-1'></i>Outbound travel departure date
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label">Return Date (Optional)</label>
+                            <div class="col-md-6" id="returnDateWrapper">
+                                <label class="form-label" id="returnDateLabel">Return Date (Return Ticket)</label>
                                 <input type="date" class="form-control" name="return_date" id="returnDate"
                                        min="{{ date('Y-m-d') }}"
                                        value="{{ old('return_date') }}">
+                                <div class="text-muted small mt-1" style="font-size: 0.75rem;">
+                                    <i class='bx bx-refresh me-1'></i>Return journey & ticket departure date
+                                </div>
+                            </div>
+
+                            <!-- Return Journey Banner Info -->
+                            <div class="col-12" id="returnTicketNotice">
+                                <div class="alert alert-success border-0 shadow-xs rounded-3 p-3 mb-0 small d-flex align-items-center gap-2">
+                                    <i class='bx bxs-check-shield text-success fs-4'></i>
+                                    <div>
+                                        <strong class="text-dark">Return Ticket Included:</strong>
+                                        <span class="text-secondary" id="returnNoticeText">Your reservation includes guaranteed return journey transport back to origin.</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -391,6 +421,11 @@
                             <span class="badge bg-primary text-white" id="summarySeatsBadge">None</span>
                         </div>
 
+                        <div class="d-flex justify-content-between text-secondary small mb-2" id="summaryTripRow" style="display: none !important;">
+                            <span>Journey Type</span>
+                            <span class="badge bg-primary text-white" id="summaryTripBadge">One-Way</span>
+                        </div>
+
                         <!-- Promo Code Discount Row (Hidden initially) -->
                         <div class="d-flex justify-content-between text-success small mb-2" id="discountRow" style="display: none;">
                             <span id="discountLabel">Promo Discount</span>
@@ -471,6 +506,8 @@
         const selectedSeatsDisplay = document.getElementById('selectedSeatsDisplay');
         const summarySeatsRow = document.getElementById('summarySeatsRow');
         const summarySeatsBadge = document.getElementById('summarySeatsBadge');
+        const summaryTripRow = document.getElementById('summaryTripRow');
+        const summaryTripBadge = document.getElementById('summaryTripBadge');
         const btnClearSeats = document.getElementById('btnClearSeats');
         const btnApplyPromo = document.getElementById('btnApplyPromo');
         const promoCodeInput = document.getElementById('promoCodeInput');
@@ -480,10 +517,67 @@
         const discountAmountDisplay = document.getElementById('discountAmountDisplay');
         const appliedPromoCode = document.getElementById('appliedPromoCode');
 
+        const tripOneWay = document.getElementById('tripOneWay');
+        const tripRoundTrip = document.getElementById('tripRoundTrip');
+        const transportTypeSelect = document.getElementById('transportTypeSelect');
+        const returnDateWrapper = document.getElementById('returnDateWrapper');
+        const returnTicketNotice = document.getElementById('returnTicketNotice');
+        const returnNoticeText = document.getElementById('returnNoticeText');
+        const fromCityBooking = document.getElementById('fromCityBooking');
+        const toCityBooking = document.getElementById('toCityBooking');
+
         // Parse any old values
         if (selectedSeatsInput.value) {
             selectedSeats = selectedSeatsInput.value.split(',').map(s => s.trim()).filter(Boolean);
             renderSelectedSeats();
+        }
+
+        function syncTripMode() {
+            const isRound = tripRoundTrip && tripRoundTrip.checked;
+            const transportType = transportTypeSelect ? transportTypeSelect.value : 'bus';
+            const origin = fromCityBooking && fromCityBooking.value ? fromCityBooking.value : 'Departure City';
+            const destination = toCityBooking && toCityBooking.value ? toCityBooking.value : 'Destination';
+
+            if (isRound || transportType === 'tour') {
+                if (returnDateWrapper) returnDateWrapper.style.display = 'block';
+                if (returnTicketNotice) returnTicketNotice.style.display = 'block';
+
+                if (transportType === 'tour') {
+                    if (returnNoticeText) {
+                        returnNoticeText.innerHTML = `<strong>Holiday Tour Round-Trip:</strong> Includes outbound journey & return transport back to <strong>${origin}</strong>.`;
+                    }
+                    if (summaryTripRow && summaryTripBadge) {
+                        summaryTripRow.style.removeProperty('display');
+                        summaryTripBadge.className = 'badge bg-success text-white';
+                        summaryTripBadge.innerText = 'Tour Package (Round-Trip Included)';
+                    }
+                } else {
+                    if (returnNoticeText) {
+                        returnNoticeText.innerHTML = `<strong>Round-Trip Ticket:</strong> Guaranteed return journey pass from <strong>${destination}</strong> ➔ <strong>${origin}</strong>.`;
+                    }
+                    if (summaryTripRow && summaryTripBadge) {
+                        summaryTripRow.style.removeProperty('display');
+                        summaryTripBadge.className = 'badge bg-primary text-white';
+                        summaryTripBadge.innerText = 'Round-Trip (Return Ticket)';
+                    }
+                }
+
+                // If return date is empty, set default return date based on journey date
+                if (journeyDate && journeyDate.value && returnDate && !returnDate.value) {
+                    const dt = new Date(journeyDate.value);
+                    dt.setDate(dt.getDate() + (transportType === 'tour' ? 3 : 1));
+                    returnDate.value = dt.toISOString().split('T')[0];
+                }
+            } else {
+                if (returnNoticeText) {
+                    returnNoticeText.innerHTML = 'One-Way journey ticket.';
+                }
+                if (summaryTripRow) {
+                    summaryTripRow.style.setProperty('display', 'none', 'important');
+                }
+            }
+
+            updateTotal();
         }
 
         function calculateDiscount(baseTotal) {
@@ -501,13 +595,18 @@
         function updateTotal() {
             const seats = parseInt(seatsSelect.value) || 1;
             const unitPrice = parseFloat(hiddenUnitPrice.value) || 1000;
-            const baseTotal = seats * unitPrice;
+            const isRound = tripRoundTrip && tripRoundTrip.checked;
+            const transportType = transportTypeSelect ? transportTypeSelect.value : 'bus';
+
+            // Bus/Train round trips count 2x journeys (outbound + return ticket)
+            const multiplier = (transportType !== 'tour' && isRound) ? 2 : 1;
+            const baseTotal = seats * unitPrice * multiplier;
 
             discountAmount = calculateDiscount(baseTotal);
             const netTotal = Math.max(0, baseTotal - discountAmount);
 
             if (displaySeatCount) {
-                displaySeatCount.innerText = `${seats} ${seats === 1 ? 'Seat' : 'Seats'}`;
+                displaySeatCount.innerText = `${seats} ${seats === 1 ? 'Seat' : 'Seats'}${multiplier > 1 ? ' (Round-Trip)' : ''}`;
             }
 
             if (discountRow) {
@@ -651,13 +750,27 @@
                 if (returnDate.value && returnDate.value < this.value) {
                     returnDate.value = this.value;
                 }
+                syncTripMode();
+            });
+            returnDate.addEventListener('change', function() {
+                if (this.value && tripRoundTrip) {
+                    tripRoundTrip.checked = true;
+                    syncTripMode();
+                }
             });
         }
 
-        // Initial total calculation
-        updateTotal();
+        if (tripOneWay) tripOneWay.addEventListener('change', syncTripMode);
+        if (tripRoundTrip) tripRoundTrip.addEventListener('change', syncTripMode);
+        if (transportTypeSelect) transportTypeSelect.addEventListener('change', syncTripMode);
+        if (fromCityBooking) fromCityBooking.addEventListener('change', syncTripMode);
+        if (toCityBooking) toCityBooking.addEventListener('change', syncTripMode);
+
+        // Initial setup
+        syncTripMode();
     });
 </script>
 @endpush
 
 @endsection
+

@@ -179,8 +179,77 @@ function swapCities(fromInputId = 'fromInput', toInputId = 'toInput') {
     fromEl.value = toEl.value;
     toEl.value = temp;
 
+    fromEl.dispatchEvent(new Event('input', { bubbles: true }));
     fromEl.dispatchEvent(new Event('change', { bubbles: true }));
+    toEl.dispatchEvent(new Event('input', { bubbles: true }));
     toEl.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+// Quick Destination selector function
+function selectDestination(destinationName, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const toInput = document.getElementById('toInput') || document.getElementById('toInputExplore');
+
+    if (toInput) {
+        toInput.value = destinationName;
+        toInput.dispatchEvent(new Event('input', { bubbles: true }));
+        toInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Visual focus & outline feedback
+        toInput.focus();
+        toInput.classList.add('ring-highlight');
+        setTimeout(() => {
+            toInput.classList.remove('ring-highlight');
+        }, 1800);
+
+        // Smooth scroll to search form
+        const searchContainer = document.getElementById('heroSearchForm') || 
+                                document.querySelector('.search-widget-card') || 
+                                document.querySelector('form[action*="explore"]');
+        if (searchContainer) {
+            searchContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    } else {
+        // Redirect to explore page with destination set if not on search page
+        window.location.href = "/explore?to=" + encodeURIComponent(destinationName);
+    }
+}
+
+// Quick Route setter function (From & To)
+function setQuickRoute(from, to, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    const fromInput = document.getElementById('fromInput') || document.getElementById('fromInputExplore');
+    const toInput = document.getElementById('toInput') || document.getElementById('toInputExplore');
+
+    if (fromInput && toInput) {
+        fromInput.value = from;
+        toInput.value = to;
+        fromInput.dispatchEvent(new Event('input', { bubbles: true }));
+        fromInput.dispatchEvent(new Event('change', { bubbles: true }));
+        toInput.dispatchEvent(new Event('input', { bubbles: true }));
+        toInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        toInput.focus();
+        toInput.classList.add('ring-highlight');
+        setTimeout(() => {
+            toInput.classList.remove('ring-highlight');
+        }, 1800);
+
+        const searchContainer = document.getElementById('heroSearchForm') || 
+                                document.querySelector('.search-widget-card') || 
+                                document.querySelector('form[action*="explore"]');
+        if (searchContainer) {
+            searchContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', initCityAutocomplete);
+

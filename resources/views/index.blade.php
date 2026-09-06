@@ -116,7 +116,7 @@
 </section>
 
 <!-- SMART SEARCH & FILTER WIDGET -->
-<div class="container-xl">
+<div class="container-xl" id="heroSearchForm">
     <div class="search-widget-card">
         <form action="{{ route('explore') }}" method="GET">
             <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3 mb-3 gap-2">
@@ -481,46 +481,94 @@
 
         <div class="row g-4">
             <div class="col-lg-3 col-md-6 col-6">
-                <div class="travel-card text-center p-3">
-                    <div class="travel-card-img-wrap rounded-4 mb-3" style="aspect-ratio: 1/1;">
-                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" alt="Cox's Bazar">
+                <div class="travel-card text-center p-3 h-100 position-relative shadow-sm rounded-4 border overflow-hidden d-flex flex-column" 
+                     onclick="selectDestination('Cox\'s Bazar', event)" 
+                     style="cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                    <div class="travel-card-img-wrap rounded-4 mb-3" style="aspect-ratio: 1/1; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" alt="Cox's Bazar" class="w-100 h-100 object-fit-cover">
                     </div>
-                    <h6 class="fw-bold mb-1">Cox's Bazar</h6>
-                    <div class="text-secondary small mb-2">120km Golden Beach</div>
-                    <a href="{{ route('explore', ['search' => 'Cox\'s Bazar']) }}" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">View Trips</a>
+                    <h6 class="fw-bold mb-1 text-dark">Cox's Bazar</h6>
+                    <div class="text-secondary small mb-3">120km Golden Beach</div>
+                    <div class="mt-auto d-flex flex-column gap-1">
+                        <button type="button" class="btn btn-sm btn-primary-gradient rounded-pill px-3 fw-bold w-100 shadow-sm" 
+                                onclick="selectDestination('Cox\'s Bazar', event)">
+                            <i class='bx bxs-map-pin me-1'></i>Select Destination
+                        </button>
+                        <a href="{{ route('explore', ['to' => 'Cox\'s Bazar']) }}" 
+                           class="btn btn-sm btn-link text-decoration-none small text-muted py-1" 
+                           onclick="event.stopPropagation()">
+                            View All Trips <i class='bx bx-right-arrow-alt'></i>
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <div class="col-lg-3 col-md-6 col-6">
-                <div class="travel-card text-center p-3">
-                    <div class="travel-card-img-wrap rounded-4 mb-3" style="aspect-ratio: 1/1;">
-                        <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" alt="Sajek Valley">
+                <div class="travel-card text-center p-3 h-100 position-relative shadow-sm rounded-4 border overflow-hidden d-flex flex-column" 
+                     onclick="selectDestination('Sajek Valley', event)" 
+                     style="cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                    <div class="travel-card-img-wrap rounded-4 mb-3" style="aspect-ratio: 1/1; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" alt="Sajek Valley" class="w-100 h-100 object-fit-cover">
                     </div>
-                    <h6 class="fw-bold mb-1">Sajek Valley</h6>
-                    <div class="text-secondary small mb-2">Kingdom of Clouds</div>
-                    <a href="{{ route('explore', ['search' => 'Sajek']) }}" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">View Trips</a>
+                    <h6 class="fw-bold mb-1 text-dark">Sajek Valley</h6>
+                    <div class="text-secondary small mb-3">Kingdom of Clouds</div>
+                    <div class="mt-auto d-flex flex-column gap-1">
+                        <button type="button" class="btn btn-sm btn-primary-gradient rounded-pill px-3 fw-bold w-100 shadow-sm" 
+                                onclick="selectDestination('Sajek Valley', event)">
+                            <i class='bx bxs-map-pin me-1'></i>Select Destination
+                        </button>
+                        <a href="{{ route('explore', ['to' => 'Sajek']) }}" 
+                           class="btn btn-sm btn-link text-decoration-none small text-muted py-1" 
+                           onclick="event.stopPropagation()">
+                            View All Trips <i class='bx bx-right-arrow-alt'></i>
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <div class="col-lg-3 col-md-6 col-6">
-                <div class="travel-card text-center p-3">
-                    <div class="travel-card-img-wrap rounded-4 mb-3" style="aspect-ratio: 1/1;">
-                        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80" alt="Sylhet">
+                <div class="travel-card text-center p-3 h-100 position-relative shadow-sm rounded-4 border overflow-hidden d-flex flex-column" 
+                     onclick="selectDestination('Sylhet', event)" 
+                     style="cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                    <div class="travel-card-img-wrap rounded-4 mb-3" style="aspect-ratio: 1/1; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80" alt="Sylhet" class="w-100 h-100 object-fit-cover">
                     </div>
-                    <h6 class="fw-bold mb-1">Sylhet</h6>
-                    <div class="text-secondary small mb-2">Lush Tea Gardens & Ratargul</div>
-                    <a href="{{ route('explore', ['search' => 'Sylhet']) }}" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">View Trips</a>
+                    <h6 class="fw-bold mb-1 text-dark">Sylhet</h6>
+                    <div class="text-secondary small mb-3">Lush Tea Gardens & Ratargul</div>
+                    <div class="mt-auto d-flex flex-column gap-1">
+                        <button type="button" class="btn btn-sm btn-primary-gradient rounded-pill px-3 fw-bold w-100 shadow-sm" 
+                                onclick="selectDestination('Sylhet', event)">
+                            <i class='bx bxs-map-pin me-1'></i>Select Destination
+                        </button>
+                        <a href="{{ route('explore', ['to' => 'Sylhet']) }}" 
+                           class="btn btn-sm btn-link text-decoration-none small text-muted py-1" 
+                           onclick="event.stopPropagation()">
+                            View All Trips <i class='bx bx-right-arrow-alt'></i>
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <div class="col-lg-3 col-md-6 col-6">
-                <div class="travel-card text-center p-3">
-                    <div class="travel-card-img-wrap rounded-4 mb-3" style="aspect-ratio: 1/1;">
-                        <img src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=600&q=80" alt="Sundarbans">
+                <div class="travel-card text-center p-3 h-100 position-relative shadow-sm rounded-4 border overflow-hidden d-flex flex-column" 
+                     onclick="selectDestination('Sundarbans', event)" 
+                     style="cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                    <div class="travel-card-img-wrap rounded-4 mb-3" style="aspect-ratio: 1/1; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=600&q=80" alt="Sundarbans" class="w-100 h-100 object-fit-cover">
                     </div>
-                    <h6 class="fw-bold mb-1">Sundarbans</h6>
-                    <div class="text-secondary small mb-2">World Heritage Mangrove</div>
-                    <a href="{{ route('explore', ['search' => 'Khulna']) }}" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">View Trips</a>
+                    <h6 class="fw-bold mb-1 text-dark">Sundarbans</h6>
+                    <div class="text-secondary small mb-3">World Heritage Mangrove</div>
+                    <div class="mt-auto d-flex flex-column gap-1">
+                        <button type="button" class="btn btn-sm btn-primary-gradient rounded-pill px-3 fw-bold w-100 shadow-sm" 
+                                onclick="selectDestination('Sundarbans', event)">
+                            <i class='bx bxs-map-pin me-1'></i>Select Destination
+                        </button>
+                        <a href="{{ route('explore', ['to' => 'Khulna']) }}" 
+                           class="btn btn-sm btn-link text-decoration-none small text-muted py-1" 
+                           onclick="event.stopPropagation()">
+                            View All Trips <i class='bx bx-right-arrow-alt'></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -545,19 +593,5 @@
     </div>
 </section>
 
-@push('scripts')
-<script>
-    function setQuickRoute(from, to) {
-        const fromInput = document.getElementById('fromInput');
-        const toInput = document.getElementById('toInput');
-        if (fromInput && toInput) {
-            fromInput.value = from;
-            toInput.value = to;
-            fromInput.dispatchEvent(new Event('change', { bubbles: true }));
-            toInput.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-    }
-</script>
-@endpush
 
 @endsection

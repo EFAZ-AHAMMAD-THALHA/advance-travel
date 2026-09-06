@@ -46,11 +46,11 @@
             <div class="col-lg-3 col-md-6 col-6">
                 <h6>Popular Routes</h6>
                 <ul class="list-unstyled">
-                    <li><a href="{{ route('explore', ['search' => 'Cox\'s Bazar']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Dhaka ➔ Cox's Bazar</a></li>
-                    <li><a href="{{ route('explore', ['search' => 'Sylhet']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Dhaka ➔ Sylhet Express</a></li>
-                    <li><a href="{{ route('explore', ['search' => 'Chattogram']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Dhaka ➔ Chattogram</a></li>
-                    <li><a href="{{ route('explore', ['search' => 'Rajshahi']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Dhaka ➔ Rajshahi Silk City</a></li>
-                    <li><a href="{{ route('explore', ['search' => 'Sajek']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Chittagong ➔ Sajek Valley</a></li>
+                    <li><a href="{{ route('explore', ['from' => 'Dhaka', 'to' => 'Cox\'s Bazar']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Dhaka ➔ Cox's Bazar</a></li>
+                    <li><a href="{{ route('explore', ['from' => 'Dhaka', 'to' => 'Sylhet']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Dhaka ➔ Sylhet Express</a></li>
+                    <li><a href="{{ route('explore', ['from' => 'Dhaka', 'to' => 'Chattogram']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Dhaka ➔ Chattogram</a></li>
+                    <li><a href="{{ route('explore', ['from' => 'Dhaka', 'to' => 'Rajshahi']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Dhaka ➔ Rajshahi Silk City</a></li>
+                    <li><a href="{{ route('explore', ['from' => 'Chattogram', 'to' => 'Sajek']) }}"><i class='bx bx-right-arrow-alt me-1 text-primary'></i>Chittagong ➔ Sajek Valley</a></li>
                 </ul>
             </div>
 
