@@ -1,0 +1,80 @@
+/* Login page only */
+.login-page {
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* pretty background */
+  background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1950&q=80')
+              no-repeat center center / cover;
+}
+
+/* Glass card */
+.login-container {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 40px;
+  width: 600px;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+
+.login-container h2 { text-align:center; margin-bottom:25px; font-size:24px; font-weight:600;
+color: black; }
+
+.input-group { margin-bottom: 20px; }
+.input-group label { font-size:14px; display:block; margin-bottom:6px; }
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+
+.options label {
+  display: inline-flex;
+  align-items: center;       /* ✅ vertically centers checkbox + text */
+  gap: 8px;                  /* space between checkbox and text */
+  white-space: nowrap;       /* keep everything on one line */
+  line-height: 1.2;          /* keep text height consistent */
+}
+
+.options label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #000;        /* optional: black checkbox accent color */
+  vertical-align: middle;    /* helps fine-tune baseline alignment */
+  transform: translateY(-1px); /* ✅ small tweak to perfectly center */
+}
+
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  color: #333;
+  transition: 0.3s;
+}
+.login-btn:hover { background: #f1f1f1; }
+
+.register { text-align:center; margin-top:15px; font-size:13px; }
+.register a { color:#fff; font-weight:600; text-decoration:none; }
+.register a:hover { text-decoration: underline; }

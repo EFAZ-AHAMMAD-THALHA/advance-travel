@@ -1,0 +1,177 @@
+/* Register Page */
+.login-page {
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Background - softer and more welcoming */
+  background: url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1950&q=80')
+              no-repeat center center / cover;
+}
+
+/* Glass card styling */
+.login-container {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  border-radius: 15px;
+  padding: 40px;
+  width: 600px;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Heading */
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #000;
+}
+
+/* Input fields */
+.input-group { margin-bottom: 20px; }
+.input-group label {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 6px;
+  color: #000;
+}
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+  transition: 0.3s;
+}
+.input-group input:focus {
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+/* Password toggle button */
+.password-wrapper {
+  position: relative;
+}
+.password-wrapper .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #444;
+  transition: color 0.3s ease;
+}
+.password-wrapper .toggle-password:hover {
+  color: #000;
+}
+
+/* Alerts */
+.alert {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+.alert-success {
+  background: rgba(0, 255, 100, 0.15);
+  border: 1px solid rgba(0, 255, 100, 0.3);
+  color: #0a8f55;
+}
+.alert-danger {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #b30000;
+}
+
+/* Options (checkbox & terms) */
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.options label {
+  display: inline-flex;
+  align-items: center;       /* ✅ vertically centers checkbox + text */
+  gap: 8px;                  /* space between checkbox and text */
+  white-space: nowrap;       /* keep everything on one line */
+  line-height: 1.2;          /* keep text height consistent */
+}
+
+.options label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #000;        /* optional: black checkbox accent color */
+  vertical-align: middle;    /* helps fine-tune baseline alignment */
+  transform: translateY(-1px); /* ✅ small tweak to perfectly center */
+}
+
+
+
+/* Submit button */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.login-btn:hover {
+  background: #333;
+}
+
+/* Switch to login text */
+.register {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #000;
+}
+.register a {
+  color: #000;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+.register a:hover {
+  text-decoration: underline;
+}
+
+/* Validation error text */
+.input-error {
+  display: block;
+  font-size: 13px;
+  color: #b30000;
+  margin-top: 5px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 650px) {
+  .login-container {
+    width: 90%;
+    padding: 30px 20px;
+  }
+
+  .login-container h2 {
+    font-size: 22px;
+  }
+}
