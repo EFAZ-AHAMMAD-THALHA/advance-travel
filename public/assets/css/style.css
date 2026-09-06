@@ -810,19 +810,31 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   background: #ffffff;
   border: 2px solid var(--slate-200);
   border-radius: 1.25rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
 }
 
 .seat-row {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.row-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--slate-400);
+  width: 38px;
+  text-align: center;
+  letter-spacing: 0.05em;
 }
 
 .seat-btn {
   width: 44px;
   height: 42px;
-  border-radius: 8px;
+  border-radius: 8px 8px 6px 6px;
   font-weight: 700;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -830,8 +842,20 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   background-color: #ffffff;
   color: var(--slate-700);
   cursor: pointer;
+  position: relative;
   transition: all 0.15s ease-in-out;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.seat-btn::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  right: 6px;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
 }
 
 .seat-btn:hover:not(.occupied) {
@@ -839,15 +863,19 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   color: var(--primary);
   background-color: #eff6ff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
 }
 
 .seat-btn.selected {
   background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
   color: #ffffff;
   border-color: #1d4ed8;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
   transform: translateY(-1px);
+}
+
+.seat-btn.selected::before {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .seat-btn.occupied {
@@ -855,22 +883,28 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   color: var(--slate-400);
   border-color: var(--slate-200);
   cursor: not-allowed;
-  opacity: 0.65;
+  opacity: 0.6;
   text-decoration: line-through;
 }
 
 .coupon-pill {
   font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-pill);
   transition: all 0.15s ease;
+  cursor: pointer;
+  user-select: none;
 }
 .coupon-pill:hover {
-  background-color: var(--slate-100) !important;
+  background-color: var(--primary-light) !important;
   color: var(--primary) !important;
   border-color: var(--primary) !important;
+  transform: translateY(-1px);
 }
 
 /* ==========================================================================
-   LIVE FLEET GPS RADAR & TIMELINE
+   LIVE FLEET GPS RADAR & TIMELINE (Pixel-Perfect Center Alignment)
    ========================================================================== */
 .radar-pulse-icon {
   width: 44px;
@@ -890,24 +924,30 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 .tracking-timeline {
-  padding-left: 2rem;
+  position: relative;
+  padding-left: 3.5rem;
 }
 
 .timeline-line {
   position: absolute;
-  top: 14px;
-  bottom: 20px;
-  left: 17px;
+  top: 18px;
+  bottom: 24px;
+  left: 18px;
   width: 3px;
   background: var(--slate-200);
+  border-radius: 3px;
+}
+
+.timeline-item {
+  position: relative;
 }
 
 .timeline-dot {
   position: absolute;
-  left: -2rem;
+  left: -3.5rem;
   top: 10px;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;

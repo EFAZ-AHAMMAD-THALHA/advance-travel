@@ -155,6 +155,11 @@
                         </td>
                         <td class="text-end">
                             <div class="d-flex justify-content-end gap-1">
+                                <!-- View E-Ticket -->
+                                <a href="{{ route('booking.ticket', $booking->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-2 px-2" title="Inspect E-Ticket">
+                                    <i class='bx bx-printer'></i>
+                                </a>
+
                                 <!-- Status Update Trigger Button -->
                                 <button type="button" class="btn btn-sm btn-outline-primary rounded-2 px-2"
                                         data-bs-toggle="modal" data-bs-target="#editStatusModal{{ $booking->id }}" title="Change Status">

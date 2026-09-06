@@ -30,8 +30,9 @@
                         <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('explore', ['type' => 'bus']) }}"><i class='bx bx-bus text-info'></i> Luxury Bus Tickets</a></li>
                         <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('explore', ['type' => 'train']) }}"><i class='bx bx-train text-warning'></i> Express Train Tickets</a></li>
                         <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('explore', ['type' => 'tour']) }}"><i class='bx bx-sun text-success'></i> Holiday Tour Packages</a></li>
-                        <li><hr class="dropdown-divider my-1"></li>
                         <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('locations') }}"><i class='bx bx-map-pin text-danger'></i> Top Destinations</a></li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2 text-success fw-semibold" href="{{ route('booking.verify') }}"><i class='bx bx-check-shield text-success'></i> Verify Boarding Pass / QR</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">

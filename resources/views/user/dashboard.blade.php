@@ -18,6 +18,9 @@
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
                         <h3 class="fw-bold text-dark mb-0">{{ auth()->user()->name }}</h3>
                         <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 small fw-bold">Verified Traveler</span>
+                        <a href="{{ route('profile') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-0.5 fw-semibold" style="font-size: 0.78rem;">
+                            <i class='bx bx-cog me-1'></i>Account Settings
+                        </a>
                     </div>
                     <div class="text-secondary small d-flex flex-wrap gap-3">
                         <span><i class='bx bx-envelope me-1'></i>{{ auth()->user()->email }}</span>
@@ -145,10 +148,18 @@
                                                     <span class="badge bg-light text-dark border px-2.5 py-1">
                                                         {{ $b->seats }} Seat(s)
                                                     </span>
+                                                    @if($b->selected_seats)
+                                                        <span class="badge bg-primary text-white px-2 py-0.5 mt-1 d-inline-block" style="font-size: 0.72rem;">{{ $b->selected_seats }}</span>
+                                                    @endif
                                                     <div class="text-secondary small mt-0.5">{{ $b->room_type }}</div>
                                                 </td>
                                                 <td>
                                                     <span class="fw-bold text-success">৳{{ number_format($b->total_price, 2) }}</span>
+                                                    @if($b->discount_amount > 0)
+                                                        <div class="badge bg-success-subtle text-success border border-success-subtle mt-0.5" style="font-size: 0.65rem;">
+                                                            -৳{{ number_format($b->discount_amount, 0) }} ({{ $b->promo_code }})
+                                                        </div>
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     @if($b->payment_status === 'paid')
@@ -158,20 +169,20 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-end">
-                                                    <div class="d-flex justify-content-end gap-1">
+                                                    <div class="d-flex justify-content-end gap-1.5 flex-wrap">
                                                         <a href="{{ route('booking.ticket', $b->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-2.5 fw-semibold" title="View & Print Ticket">
-                                                            <i class='bx bx-printer align-middle'></i> E-Ticket
+                                                            <i class='bx bx-printer align-middle me-0.5'></i> E-Ticket
                                                         </a>
 
                                                         @if($b->payment_status !== 'paid')
-                                                            <a href="{{ route('payment.checkout', $b->id) }}" class="btn btn-sm btn-primary-gradient rounded-pill px-2.5">
+                                                            <a href="{{ route('payment.checkout', $b->id) }}" class="btn btn-sm btn-primary-gradient rounded-pill px-2.5 fw-semibold">
                                                                 Pay ৳
                                                             </a>
                                                         @endif
 
-                                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-2"
+                                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-2.5 fw-semibold"
                                                                 data-bs-toggle="modal" data-bs-target="#cancelModal{{ $b->id }}" title="Cancel Booking">
-                                                            <i class='bx bx-x'></i>
+                                                            <i class='bx bx-x-circle me-1'></i>Cancel
                                                         </button>
                                                     </div>
 
@@ -268,7 +279,12 @@
                                                 <td>
                                                     <span class="text-dark fw-medium">{{ \Carbon\Carbon::parse($b->journey_date ?? $b->check_in_date)->format('M d, Y') }}</span>
                                                 </td>
-                                                <td>{{ $b->seats }} Seat(s)</td>
+                                                <td>
+                                                    <span>{{ $b->seats }} Seat(s)</span>
+                                                    @if($b->selected_seats)
+                                                        <span class="badge bg-light text-dark border ms-1">{{ $b->selected_seats }}</span>
+                                                    @endif
+                                                </td>
                                                 <td class="fw-bold text-dark">৳{{ number_format($b->total_price, 2) }}</td>
                                                 <td>
                                                     <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2.5 py-1">Completed</span>
@@ -299,10 +315,11 @@
                                         <tr>
                                             <th>Ticket Code</th>
                                             <th>Route</th>
-                                            <th>Date Cancelled</th>
+                                            <th>Date of Journey</th>
                                             <th>Amount</th>
                                             <th>Cancellation Status</th>
                                             <th>Refund State</th>
+                                            <th class="text-end">Voucher</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -310,7 +327,7 @@
                                             <tr>
                                                 <td class="fw-bold font-monospace">{{ $b->booking_code }}</td>
                                                 <td>{{ $b->from_city }} ➔ {{ $b->to_city }}</td>
-                                                <td>{{ $b->cancelled_at ? \Carbon\Carbon::parse($b->cancelled_at)->format('M d, Y') : 'N/A' }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($b->journey_date ?? $b->check_in_date)->format('M d, Y') }}</td>
                                                 <td class="fw-bold">৳{{ number_format($b->total_price, 2) }}</td>
                                                 <td>
                                                     <span class="badge badge-status-cancelled badge-pill">Cancelled</span>
@@ -325,6 +342,11 @@
                                                     @else
                                                         <span class="badge bg-light text-secondary border badge-pill">No Refund</span>
                                                     @endif
+                                                </td>
+                                                <td class="text-end">
+                                                    <a href="{{ route('booking.verify', $b->booking_code) }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-2.5">
+                                                        <i class='bx bx-file me-1'></i>Voucher
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach

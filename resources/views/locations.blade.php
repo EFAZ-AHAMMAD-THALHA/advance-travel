@@ -142,7 +142,7 @@
                             </p>
 
                             <div class="mt-auto pt-2 border-top">
-                                <a href="{{ route('explore', ['search' => $loc['name']]) }}" class="btn btn-primary-gradient w-100 py-1.5 small fw-semibold">
+                                <a href="{{ route('explore', ['q' => $loc['name']]) }}" class="btn btn-primary-gradient w-100 py-1.5 small fw-semibold">
                                     <span>Find Tickets</span>
                                     <i class='bx bx-right-arrow-alt'></i>
                                 </a>

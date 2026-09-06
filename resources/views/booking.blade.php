@@ -292,9 +292,12 @@
                                     @endphp
 
                                     @foreach($rows as $row)
-                                        <div class="seat-row d-flex justify-content-between align-items-center">
+                                        <div class="seat-row">
+                                            <!-- Row Identifier Left -->
+                                            <div class="row-label">{{ $row }}</div>
+
                                             <!-- Left Pair (Window & Aisle) -->
-                                            <div class="d-flex gap-2">
+                                            <div class="d-flex gap-1.5">
                                                 @php $s1 = $row . '1'; @endphp
                                                 <button type="button" class="seat-btn {{ in_array($s1, $occupiedSeats) ? 'occupied' : 'available' }}" data-seat="{{ $s1 }}" title="Seat {{ $s1 }} (Window)">
                                                     {{ $s1 }}
@@ -307,12 +310,12 @@
                                             </div>
 
                                             <!-- Aisle Walkway -->
-                                            <div class="aisle-spacer text-muted font-monospace small" style="font-size: 0.65rem;">
+                                            <div class="aisle-spacer text-muted font-monospace small px-1" style="font-size: 0.65rem;">
                                                 <i class='bx bx-walk text-secondary opacity-50'></i>
                                             </div>
 
                                             <!-- Right Pair (Aisle & Window) -->
-                                            <div class="d-flex gap-2">
+                                            <div class="d-flex gap-1.5">
                                                 @php $s3 = $row . '3'; @endphp
                                                 <button type="button" class="seat-btn {{ in_array($s3, $occupiedSeats) ? 'occupied' : 'available' }}" data-seat="{{ $s3 }}" title="Seat {{ $s3 }} (Aisle)">
                                                     {{ $s3 }}
@@ -323,6 +326,9 @@
                                                     {{ $s4 }}
                                                 </button>
                                             </div>
+
+                                            <!-- Row Identifier Right -->
+                                            <div class="row-label">{{ $row }}</div>
                                         </div>
                                     @endforeach
                                 </div>
@@ -344,6 +350,29 @@
 
                 <!-- Right Sticky Summary Column -->
                 <div class="col-lg-4">
+                    <!-- 1. Dedicated Promo & Coupon Card -->
+                    <div class="bg-white rounded-4 border p-4 shadow-sm mb-3">
+                        <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom">
+                            <i class='bx bxs-discount text-primary fs-5'></i>
+                            <h6 class="fw-bold mb-0 text-dark">Have a Promo Code?</h6>
+                        </div>
+                        <div class="input-group input-group-sm mb-1.5">
+                            <input type="text" class="form-control text-uppercase font-monospace" id="promoCodeInput" placeholder="e.g. STUDENT2026" autocomplete="off">
+                            <button type="button" class="btn btn-dark px-3 fw-semibold" id="btnApplyPromo">Apply</button>
+                        </div>
+                        <div id="promoFeedback" class="small mt-1" style="font-size: 0.725rem;"></div>
+
+                        <!-- Sample Demo Promo Pills for Examiner/User Convenience -->
+                        <div class="d-flex flex-wrap gap-1 mt-2">
+                            <span class="badge bg-light border text-secondary coupon-pill" onclick="fillPromo('STUDENT2026')">🎓 STUDENT2026 (-20%)</span>
+                            <span class="badge bg-light border text-secondary coupon-pill" onclick="fillPromo('ADVANCE15')">🚀 ADVANCE15 (-15%)</span>
+                            <span class="badge bg-light border text-secondary coupon-pill" onclick="fillPromo('VIVA500')">🎁 VIVA500 (-৳500)</span>
+                        </div>
+                        <!-- Hidden input passed to server -->
+                        <input type="hidden" name="promo_code" id="appliedPromoCode" value="{{ old('promo_code') }}">
+                    </div>
+
+                    <!-- 2. Clean Fare Summary Card -->
                     <div class="booking-summary-card p-4">
                         <h5 class="fw-bold mb-3 pb-2 border-bottom">Fare Breakdown</h5>
 
@@ -362,41 +391,20 @@
                             <span class="badge bg-primary text-white" id="summarySeatsBadge">None</span>
                         </div>
 
-                        <div class="d-flex justify-content-between text-secondary small mb-2">
-                            <span>Online Reservation Fee</span>
-                            <span class="text-success fw-bold">FREE (৳0)</span>
-                        </div>
-
                         <!-- Promo Code Discount Row (Hidden initially) -->
                         <div class="d-flex justify-content-between text-success small mb-2" id="discountRow" style="display: none;">
                             <span id="discountLabel">Promo Discount</span>
                             <span class="fw-bold" id="discountAmountDisplay">-৳0.00</span>
                         </div>
 
+                        <div class="d-flex justify-content-between text-secondary small mb-2">
+                            <span>Online Reservation Fee</span>
+                            <span class="text-success fw-bold">FREE (৳0)</span>
+                        </div>
+
                         <div class="d-flex justify-content-between text-secondary small mb-3 pb-3 border-bottom">
                             <span>Applicable Taxes & VAT</span>
                             <span class="fw-semibold text-dark">৳0.00</span>
-                        </div>
-
-                        <!-- Interactive Promo Code Engine Card -->
-                        <div class="p-3 rounded-3 bg-light border mb-3">
-                            <label class="form-label small fw-bold text-dark d-flex align-items-center gap-1 mb-1">
-                                <i class='bx bxs-discount text-primary'></i> Have a Promo Code?
-                            </label>
-                            <div class="input-group input-group-sm mb-1.5">
-                                <input type="text" class="form-control text-uppercase font-monospace" id="promoCodeInput" placeholder="e.g. STUDENT2026" autocomplete="off">
-                                <button type="button" class="btn btn-dark px-3 fw-semibold" id="btnApplyPromo">Apply</button>
-                            </div>
-                            <div id="promoFeedback" class="small mt-1" style="font-size: 0.725rem;"></div>
-
-                            <!-- Sample Demo Promo Pills for Examiner/User Convenience -->
-                            <div class="d-flex flex-wrap gap-1 mt-2">
-                                <span class="badge bg-white border text-secondary coupon-pill" style="cursor: pointer;" onclick="fillPromo('STUDENT2026')">🎓 STUDENT2026 (-20%)</span>
-                                <span class="badge bg-white border text-secondary coupon-pill" style="cursor: pointer;" onclick="fillPromo('ADVANCE15')">🚀 ADVANCE15 (-15%)</span>
-                                <span class="badge bg-white border text-secondary coupon-pill" style="cursor: pointer;" onclick="fillPromo('VIVA500')">🎁 VIVA500 (-৳500)</span>
-                            </div>
-                            <!-- Hidden input passed to server -->
-                            <input type="hidden" name="promo_code" id="appliedPromoCode" value="{{ old('promo_code') }}">
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mb-4">

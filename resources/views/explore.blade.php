@@ -55,7 +55,7 @@
                         <label class="form-label">Route or Keyword</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light text-secondary"><i class='bx bx-search'></i></span>
-                            <input type="text" name="q" class="form-control" placeholder="Search route, city, or fleet..." value="{{ request('q') }}">
+                            <input type="text" name="q" class="form-control" placeholder="Search route, city, or fleet..." value="{{ request('q') ?? request('search') ?? request('query') }}">
                         </div>
                     </div>
 

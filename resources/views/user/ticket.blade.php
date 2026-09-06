@@ -14,7 +14,7 @@
                 </a>
                 <!-- Tab Mode Toggle -->
                 <div class="btn-group bg-white p-1 rounded-pill border shadow-xs" role="group">
-                    <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold active" id="btnShowTicket" onclick="switchView('ticket')">
+                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold active" id="btnShowTicket" onclick="switchView('ticket')">
                         <i class='bx bx-id-card me-1'></i> Boarding Pass
                     </button>
                     <button type="button" class="btn btn-sm rounded-pill px-3 fw-semibold text-secondary" id="btnShowRadar" onclick="switchView('radar')">

@@ -47,7 +47,13 @@
                     </div>
                     <div class="col-sm-6">
                         <span class="text-secondary small d-block">Seat & Accommodation</span>
-                        <span class="badge bg-light text-dark border px-2.5 py-1.5 fw-semibold">{{ $booking->seats }} Seat(s) • {{ $booking->room_type }}</span>
+                        <span class="badge bg-light text-dark border px-2.5 py-1.5 fw-semibold">
+                            {{ $booking->seats }} Seat(s)
+                            @if($booking->selected_seats)
+                                ({{ $booking->selected_seats }})
+                            @endif
+                            • {{ $booking->room_type }}
+                        </span>
                     </div>
                     <div class="col-sm-6">
                         <span class="text-secondary small d-block">Payment Status</span>
@@ -63,7 +69,12 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <span class="text-secondary small">Unit Fare: ৳{{ number_format($booking->unit_price, 2) }} × {{ $booking->seats }} seat(s)</span>
+                        <span class="text-secondary small">Base Fare: ৳{{ number_format($booking->unit_price * $booking->seats, 2) }}</span>
+                        @if($booking->discount_amount > 0)
+                            <div class="text-success small fw-semibold">
+                                <i class='bx bxs-discount me-1'></i>Promo Code ({{ $booking->promo_code }}): -৳{{ number_format($booking->discount_amount, 2) }}
+                            </div>
+                        @endif
                         <h5 class="fw-bold text-dark mt-1">Total Payable Amount:</h5>
                     </div>
                     <h2 class="fw-bold text-primary mb-0">৳{{ number_format($booking->total_price, 2) }}</h2>
