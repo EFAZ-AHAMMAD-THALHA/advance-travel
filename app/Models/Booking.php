@@ -68,7 +68,7 @@ class Booking extends Model
         return $this->hasMany(Payment::class);
     }
 
-    // Helper to check if ticket can be cancelled (upcoming + not yet cancelled)
+    // Helper to check if ticket can be cancelled (today or upcoming + not yet cancelled)
     public function canBeCancelled(): bool
     {
         $travelDate = $this->journey_date ?? $this->check_in_date;
@@ -76,6 +76,6 @@ class Booking extends Model
             return false;
         }
 
-        return $this->status !== 'cancelled' && \Carbon\Carbon::parse($travelDate)->isFuture();
+        return $this->status !== 'cancelled' && \Carbon\Carbon::parse($travelDate)->startOfDay()->greaterThanOrEqualTo(\Carbon\Carbon::today());
     }
 }

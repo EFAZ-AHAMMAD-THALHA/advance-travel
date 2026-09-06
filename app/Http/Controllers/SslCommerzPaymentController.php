@@ -98,8 +98,8 @@ class SslCommerzPaymentController extends Controller
 
         $handle = curl_init();
         curl_setopt($handle, CURLOPT_URL, $direct_api_url);
-        curl_setopt($handle, CURLOPT_TIMEOUT, 15);
-        curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 15);
+        curl_setopt($handle, CURLOPT_TIMEOUT, 4);
+        curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 3);
         curl_setopt($handle, CURLOPT_POST, 1);
         curl_setopt($handle, CURLOPT_POSTFIELDS, $post_data);
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);

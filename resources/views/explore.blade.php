@@ -50,14 +50,17 @@
                 </div>
 
                 <!-- Query Inputs Row -->
-                <div class="row g-3 align-items-end">
-                    <div class="col-lg-3 col-md-6">
+                <div class="row g-3 align-items-end mb-3">
+                    <div class="col-lg-4 col-md-6">
                         <label class="form-label">Route or Keyword</label>
-                        <input type="text" name="q" class="form-control" placeholder="Search route, city, or fleet..." value="{{ request('q') }}">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-secondary"><i class='bx bx-search'></i></span>
+                            <input type="text" name="q" class="form-control" placeholder="Search route, city, or fleet..." value="{{ request('q') }}">
+                        </div>
                     </div>
 
                     <!-- From (Departure) -->
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <label class="form-label d-flex justify-content-between">
                             <span>From (Departure)</span>
                             <span class="text-primary small" style="font-size: 0.72rem; cursor: pointer;" onclick="document.getElementById('fromInputExplore').focus()">Suggestions ▼</span>
@@ -83,7 +86,7 @@
                     </div>
 
                     <!-- To (Destination) -->
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-12">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <label class="form-label mb-0">To (Destination)</label>
                             <button type="button" class="btn btn-link text-primary p-0 text-decoration-none small fw-semibold d-inline-flex align-items-center gap-1" onclick="swapCities('fromInputExplore', 'toInputExplore')" title="Swap Origin & Destination">
@@ -109,29 +112,36 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-lg-2 col-md-4">
+                <!-- Secondary Filters Row -->
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4 col-md-4">
                         <label class="form-label">Max Budget (৳)</label>
-                        <input type="number" name="max_price" class="form-control" placeholder="Max Fare" value="{{ request('max_price') }}">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-success">৳</span>
+                            <input type="number" name="max_price" class="form-control" placeholder="e.g. 5000" value="{{ request('max_price') }}">
+                        </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-4">
+                    <div class="col-lg-4 col-md-4">
                         <label class="form-label">Sort Results</label>
                         <select name="sort" class="form-select">
                             <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Featured / Latest</option>
                             <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
                             <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
-                            <option value="seats" {{ request('sort') == 'seats' ? 'selected' : '' }}>Most Seats</option>
+                            <option value="seats" {{ request('sort') == 'seats' ? 'selected' : '' }}>Most Seats Available</option>
                         </select>
                     </div>
 
-                    <div class="col-lg-1 col-md-4 d-flex gap-1">
-                        <button type="submit" class="btn btn-primary-gradient w-100 py-2.5" title="Search">
+                    <div class="col-lg-4 col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary-gradient flex-grow-1 py-2.5 fw-semibold d-inline-flex align-items-center justify-content-center gap-2">
                             <i class='bx bx-search-alt-2 fs-5'></i>
+                            <span>Filter Results</span>
                         </button>
                         @if(request()->anyFilled(['q', 'from', 'to', 'max_price', 'type', 'sort']))
-                            <a href="{{ route('explore') }}" class="btn btn-outline-danger py-2.5" title="Reset Filters">
-                                <i class='bx bx-reset fs-5'></i>
+                            <a href="{{ route('explore') }}" class="btn btn-outline-danger px-3 py-2.5 fw-semibold d-inline-flex align-items-center justify-content-center" title="Reset Filters">
+                                <i class='bx bx-reset fs-5 me-1'></i> Clear
                             </a>
                         @endif
                     </div>
