@@ -10,11 +10,12 @@ class PageController extends Controller
     public function home()
     {
         $featuredPackages = Package::where('type', 'tour')->latest()->take(6)->get();
+        $featuredFlights = Package::where('type', 'flight')->latest()->take(4)->get();
         $featuredBuses = Package::where('type', 'bus')->latest()->take(4)->get();
         $featuredTrains = Package::where('type', 'train')->latest()->take(4)->get();
         $totalPackages = Package::count();
 
-        return view('index', compact('featuredPackages', 'featuredBuses', 'featuredTrains', 'totalPackages'));
+        return view('index', compact('featuredPackages', 'featuredFlights', 'featuredBuses', 'featuredTrains', 'totalPackages'));
     }
 
     public function explore(Request $request)

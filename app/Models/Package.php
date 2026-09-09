@@ -32,7 +32,11 @@ class Package extends Model
      */
     public function getImageUrlAttribute(): string
     {
-        if ($this->image) {
+        if (!empty($this->image)) {
+            // Check if image is an external URL
+            if (filter_var($this->image, FILTER_VALIDATE_URL) || str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+                return $this->image;
+            }
             if (file_exists(public_path('uploads/packages/' . $this->image))) {
                 return asset('uploads/packages/' . $this->image);
             }
@@ -42,7 +46,7 @@ class Package extends Model
         }
 
         return match ($this->type) {
-            'flight' => 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80',
+            'flight' => 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80',
             'train'  => 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=800&q=80',
             'bus'    => 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80',
             default  => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',

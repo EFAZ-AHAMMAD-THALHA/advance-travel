@@ -312,8 +312,8 @@
                 <span class="badge badge-pill badge-bus mb-2">
                     <i class='bx bx-trending-up'></i> High Demand
                 </span>
-                <h2 class="fw-bold mb-1">Popular Bus & Train Services</h2>
-                <p class="text-secondary small mb-0">Daily scheduled departures connecting major divisions and districts</p>
+                <h2 class="fw-bold mb-1">Popular Flights, Buses & Trains</h2>
+                <p class="text-secondary small mb-0">Daily scheduled departures connecting major divisions, airports, and tourist hubs</p>
             </div>
             <a href="{{ route('explore') }}" class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-semibold">
                 Explore All Fleet <i class='bx bx-right-arrow-alt align-middle'></i>
@@ -321,14 +321,22 @@
         </div>
 
         <div class="row g-4">
-            @forelse($featuredBuses->concat($featuredTrains)->take(6) as $ticket)
+            @php
+                $flightsToDisplay = ($featuredFlights ?? collect())->take(2);
+                $busesToDisplay = ($featuredBuses ?? collect())->take(2);
+                $trainsToDisplay = ($featuredTrains ?? collect())->take(2);
+                $popularTransit = $flightsToDisplay->concat($busesToDisplay)->concat($trainsToDisplay);
+            @endphp
+            @forelse($popularTransit as $ticket)
                 <div class="col-lg-4 col-md-6">
                     <div class="travel-card">
                         <div class="travel-card-img-wrap">
                             <img src="{{ $ticket->image_url }}" alt="{{ $ticket->title }}">
                             
                             <div class="travel-card-badge">
-                                @if($ticket->type === 'bus')
+                                @if($ticket->type === 'flight')
+                                    <span class="badge badge-pill badge-flight"><i class='bx bxs-plane-alt'></i> Flight</span>
+                                @elseif($ticket->type === 'bus')
                                     <span class="badge badge-pill badge-bus"><i class='bx bx-bus'></i> Bus</span>
                                 @elseif($ticket->type === 'train')
                                     <span class="badge badge-pill badge-train"><i class='bx bx-train'></i> Train</span>
