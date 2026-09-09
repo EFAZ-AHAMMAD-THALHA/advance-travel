@@ -27,7 +27,7 @@
                         @if(auth()->user()->phone)
                             <span><i class='bx bx-phone me-1'></i>{{ auth()->user()->phone }}</span>
                         @endif
-                        <span><i class='bx bx-calendar me-1'></i>Member since {{ auth()->user()->created_at->format('M Y') }}</span>
+                        <span><i class='bx bx-calendar me-1'></i>Member since {{ optional(auth()->user()->created_at)->format('M Y') ?? '2026' }}</span>
                     </div>
                 </div>
                 <div class="col-12 col-md-auto d-flex gap-3 text-center border-start-md ps-md-4">

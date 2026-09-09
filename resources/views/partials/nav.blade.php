@@ -27,6 +27,7 @@
                     <ul class="dropdown-menu border-0 shadow-lg rounded-3 py-2" aria-labelledby="exploreDropdown">
                         <li><a class="dropdown-item py-2 fw-semibold d-flex align-items-center gap-2" href="{{ route('explore') }}"><i class='bx bx-grid-alt text-primary'></i> Explore All Tickets & Fleets</a></li>
                         <li><hr class="dropdown-divider my-1"></li>
+                        <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('explore', ['type' => 'flight']) }}"><i class='bx bxs-plane-alt text-primary'></i> Flights & Air Express</a></li>
                         <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('explore', ['type' => 'bus']) }}"><i class='bx bx-bus text-info'></i> Luxury Bus Tickets</a></li>
                         <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('explore', ['type' => 'train']) }}"><i class='bx bx-train text-warning'></i> Express Train Tickets</a></li>
                         <li><a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('explore', ['type' => 'tour']) }}"><i class='bx bx-sun text-success'></i> Holiday Tour Packages</a></li>

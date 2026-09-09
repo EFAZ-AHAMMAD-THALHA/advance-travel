@@ -53,17 +53,7 @@
                         <div class="col-lg-4 col-md-6">
                             <div class="travel-card">
                                 <div class="travel-card-img-wrap">
-                                    @php
-                                        $imgSrc = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80';
-                                        if ($pkg->image) {
-                                            if (file_exists(public_path('uploads/packages/' . $pkg->image))) {
-                                                $imgSrc = asset('uploads/packages/' . $pkg->image);
-                                            } elseif (file_exists(public_path('assets/files/' . $pkg->image))) {
-                                                $imgSrc = asset('assets/files/' . rawurlencode($pkg->image));
-                                            }
-                                        }
-                                    @endphp
-                                    <img src="{{ $imgSrc }}" alt="{{ $pkg->title }}" onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80'">
+                                    <img src="{{ $pkg->image_url }}" alt="{{ $pkg->title }}" onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80'">
                                     <div class="travel-card-badge">
                                         <span class="badge badge-pill badge-tour">Guided Tour</span>
                                     </div>

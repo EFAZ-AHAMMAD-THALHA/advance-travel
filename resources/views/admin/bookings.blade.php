@@ -23,6 +23,7 @@
             <div class="col-md-2 col-6">
                 <select name="type" class="form-select form-select-sm">
                     <option value="all">All Transports</option>
+                    <option value="flight" {{ request('type') === 'flight' ? 'selected' : '' }}>✈️ Air Flight Tickets</option>
                     <option value="bus" {{ request('type') === 'bus' ? 'selected' : '' }}>🚌 Bus Tickets</option>
                     <option value="train" {{ request('type') === 'train' ? 'selected' : '' }}>🚆 Train Tickets</option>
                     <option value="tour" {{ request('type') === 'tour' ? 'selected' : '' }}>🏖️ Tour Packages</option>
@@ -78,7 +79,7 @@
                     <tr>
                         <td>
                             <strong class="font-monospace text-primary">{{ $booking->booking_code }}</strong>
-                            <span class="badge {{ $booking->transport_type === 'bus' ? 'bg-warning text-dark' : ($booking->transport_type === 'train' ? 'bg-danger text-white' : 'bg-primary') }} text-uppercase d-block mt-1" style="font-size: 0.68rem;">
+                            <span class="badge {{ $booking->transport_type === 'flight' ? 'bg-info text-white' : ($booking->transport_type === 'bus' ? 'bg-warning text-dark' : ($booking->transport_type === 'train' ? 'bg-danger text-white' : 'bg-primary')) }} text-uppercase d-block mt-1" style="font-size: 0.68rem;">
                                 {{ $booking->transport_type }}
                             </span>
                         </td>

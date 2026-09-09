@@ -107,6 +107,12 @@ class AdminController extends Controller
     public function destroyBooking(Booking $booking)
     {
         $code = $booking->booking_code;
+
+        // Restore package seats if booking was active
+        if ($booking->package_id && $booking->status !== 'cancelled') {
+            Package::where('id', $booking->package_id)->increment('available_seats', $booking->seats);
+        }
+
         $booking->delete();
         return back()->with('success', "Booking #{$code} deleted successfully.");
     }

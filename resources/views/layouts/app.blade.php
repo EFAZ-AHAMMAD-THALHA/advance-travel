@@ -31,7 +31,7 @@
     @include('partials.nav')
 
     <!-- Flash Notifications Container -->
-    @if(session('success') || session('error') || session('status'))
+    @if(session('success') || session('error') || session('status') || session('info'))
         <div class="container mt-4 mb-2">
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-4 d-flex align-items-center py-3 px-4" role="alert">
@@ -53,6 +53,14 @@
                 <div class="alert alert-info alert-dismissible fade show shadow-sm border-0 rounded-4 d-flex align-items-center py-3 px-4" role="alert">
                     <i class='bx bxs-info-circle fs-4 me-3 text-info'></i>
                     <div class="fw-medium text-dark">{{ session('status') }}</div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if(session('info'))
+                <div class="alert alert-info alert-dismissible fade show shadow-sm border-0 rounded-4 d-flex align-items-center py-3 px-4" role="alert">
+                    <i class='bx bxs-info-circle fs-4 me-3 text-primary'></i>
+                    <div class="fw-medium text-dark">{{ session('info') }}</div>
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif

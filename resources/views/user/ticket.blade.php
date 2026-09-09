@@ -131,34 +131,18 @@
                     <!-- Right Stub / Verification Column -->
                     <div class="col-md-4 border-start-md ps-md-4">
                         <div class="text-center p-3 rounded-3 bg-light border mb-3">
-                            <!-- Clickable / Scannable QR Code -->
+                            <!-- Clickable / Scannable Dynamic QR Code -->
                             <a href="{{ route('booking.verify', $booking->booking_code) }}" target="_blank" title="Click or Scan to Verify Official Ticket" class="d-inline-block text-decoration-none">
                                 <div class="bg-white p-2 rounded-3 shadow-xs border mb-2 hover-scale" style="transition: transform 0.2s ease;">
-                                    <svg width="110" height="110" viewBox="0 0 100 100" fill="none">
-                                        <rect width="100" height="100" fill="white"/>
-                                        <!-- QR pattern simulator -->
-                                        <rect x="10" y="10" width="25" height="25" fill="#0f172a"/>
-                                        <rect x="15" y="15" width="15" height="15" fill="white"/>
-                                        <rect x="18" y="18" width="9" height="9" fill="#0f172a"/>
-                                        <rect x="65" y="10" width="25" height="25" fill="#0f172a"/>
-                                        <rect x="70" y="15" width="15" height="15" fill="white"/>
-                                        <rect x="73" y="18" width="9" height="9" fill="#0f172a"/>
-                                        <rect x="10" y="65" width="25" height="25" fill="#0f172a"/>
-                                        <rect x="15" y="70" width="15" height="15" fill="white"/>
-                                        <rect x="18" y="73" width="9" height="9" fill="#0f172a"/>
-                                        <rect x="42" y="12" width="6" height="6" fill="#0f172a"/>
-                                        <rect x="52" y="20" width="6" height="6" fill="#0f172a"/>
-                                        <rect x="42" y="42" width="16" height="16" fill="#0f172a"/>
-                                        <rect x="65" y="45" width="8" height="8" fill="#0f172a"/>
-                                        <rect x="78" y="55" width="8" height="8" fill="#0f172a"/>
-                                        <rect x="45" y="75" width="12" height="12" fill="#0f172a"/>
-                                        <rect x="68" y="78" width="18" height="8" fill="#0f172a"/>
-                                    </svg>
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&margin=6&data={{ urlencode(route('booking.verify', $booking->booking_code)) }}"
+                                         alt="QR Code for Ticket {{ $booking->booking_code }}"
+                                         width="110" height="110" class="d-block mx-auto rounded"
+                                         onerror="this.onerror=null; this.outerHTML='<svg width=\'110\' height=\'110\' viewBox=\'0 0 100 100\' fill=\'none\'><rect width=\'100\' height=\'100\' fill=\'white\'/><rect x=\'10\' y=\'10\' width=\'25\' height=\'25\' fill=\'#0f172a\'/><rect x=\'15\' y=\'15\' width=\'15\' height=\'15\' fill=\'white\'/><rect x=\'18\' y=\'18\' width=\'9\' height=\'9\' fill=\'#0f172a\'/><rect x=\'65\' y=\'10\' width=\'25\' height=\'25\' fill=\'#0f172a\'/><rect x=\'70\' y=\'15\' width=\'15\' height=\'15\' fill=\'white\'/><rect x=\'73\' y=\'18\' width=\'9\' height=\'9\' fill=\'#0f172a\'/><rect x=\'10\' y=\'65\' width=\'25\' height=\'25\' fill=\'#0f172a\'/><rect x=\'15\' y=\'70\' width=\'15\' height=\'15\' fill=\'white\'/><rect x=\'18\' y=\'73\' width=\'9\' height=\'9\' fill=\'#0f172a\'/><rect x=\'42\' y=\'42\' width=\'16\' height=\'16\' fill=\'#0f172a\'/></svg>'">
                                 </div>
                             </a>
                             <div class="small fw-bold text-dark font-monospace">{{ $booking->booking_code }}</div>
                             <div class="text-primary small fw-semibold" style="font-size: 0.75rem;">
-                                <i class='bx bx-check-shield me-0.5'></i> Click to Verify Clearance
+                                <i class='bx bx-qr-scan me-0.5'></i> Scan with Camera to Verify
                             </div>
                         </div>
 

@@ -41,7 +41,17 @@
                 <input type="hidden" name="package_id" value="{{ $package->id }}">
             @endif
 
-            <input type="hidden" name="package_price" id="hiddenUnitPrice" value="{{ $package ? $package->price : 1000 }}">
+            @php
+                $defaultUnitPrice = 1200;
+                if ($package && !empty($package->price)) {
+                    $defaultUnitPrice = $package->price;
+                } else {
+                    $selectedType = old('transport_type', 'flight');
+                    $pricingMap = ['flight' => 3800, 'bus' => 1200, 'train' => 650, 'tour' => 2500];
+                    $defaultUnitPrice = $pricingMap[$selectedType] ?? 1200;
+                }
+            @endphp
+            <input type="hidden" name="package_price" id="hiddenUnitPrice" value="{{ $defaultUnitPrice }}">
             <input type="hidden" name="package_title" value="{{ $package ? $package->title : 'Custom Ticket' }}">
 
             <div class="row g-4">
@@ -409,7 +419,7 @@
 
                         <div class="d-flex justify-content-between text-secondary small mb-2">
                             <span>Base Ticket Fare</span>
-                            <span class="fw-semibold text-dark" id="displayUnitPrice">৳{{ number_format($package ? $package->price : 1000, 2) }}</span>
+                            <span class="fw-semibold text-dark" id="displayUnitPrice">৳{{ number_format($defaultUnitPrice, 2) }}</span>
                         </div>
 
                         <div class="d-flex justify-content-between text-secondary small mb-2">
@@ -449,7 +459,7 @@
                                 <small class="text-muted" style="font-size: 0.75rem;">Instant E-Ticket issuance</small>
                             </div>
                             <h3 class="fw-bold text-primary mb-0" id="totalPriceDisplay">
-                                ৳{{ number_format($package ? $package->price : 1000, 2) }}
+                                ৳{{ number_format($defaultUnitPrice, 2) }}
                             </h3>
                         </div>
 
@@ -533,11 +543,29 @@
             renderSelectedSeats();
         }
 
+        const isCustomPackage = {{ ($package && !empty($package->id)) ? 'false' : 'true' }};
+        const defaultCategoryPrices = {
+            flight: 3800,
+            bus: 1200,
+            train: 650,
+            tour: 2500
+        };
+
         function syncTripMode() {
             const isRound = tripRoundTrip && tripRoundTrip.checked;
             const transportType = transportTypeSelect ? transportTypeSelect.value : 'bus';
             const origin = fromCityBooking && fromCityBooking.value ? fromCityBooking.value : 'Departure City';
             const destination = toCityBooking && toCityBooking.value ? toCityBooking.value : 'Destination';
+
+            // If user is booking a custom service (not a preset package), adjust price according to transport category
+            if (isCustomPackage && transportTypeSelect) {
+                const catPrice = defaultCategoryPrices[transportType] || 1200;
+                if (hiddenUnitPrice) hiddenUnitPrice.value = catPrice;
+                const displayUnitPrice = document.getElementById('displayUnitPrice');
+                if (displayUnitPrice) {
+                    displayUnitPrice.innerText = `৳${catPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                }
+            }
 
             if (isRound || transportType === 'tour') {
                 if (returnDateWrapper) returnDateWrapper.style.display = 'block';

@@ -556,4 +556,121 @@ class TravelPlatformTest extends TestCase
         $searchResponse->assertOk();
         $searchResponse->assertJsonFragment(['flight_number' => 'BG-401']);
     }
+
+    /** 19. Test Overselling Prevention: Booking rejected when package seats are insufficient */
+    public function test_booking_rejects_when_package_seats_exhausted(): void
+    {
+        $limitedService = Package::create([
+            'type'            => 'flight',
+            'title'           => 'Dhaka to Sylhet Express Flight',
+            'from_location'   => 'Dhaka',
+            'to_location'     => 'Sylhet',
+            'departure_time'  => '10:00 AM',
+            'available_seats' => 1,
+            'price'           => 4200.00,
+            'description'     => 'Domestic express flight service.',
+            'location'        => 'Sylhet',
+        ]);
+
+        $response = $this->actingAs($this->traveler)->post('/booking/store', [
+            'firstname'      => 'Efaz',
+            'email'          => 'user@travel.com',
+            'phone'          => '01812345678',
+            'transport_type' => 'flight',
+            'from_city'      => 'Dhaka',
+            'to_city'        => 'Sylhet',
+            'journey_date'   => Carbon::tomorrow()->toDateString(),
+            'seats'          => 2, // ❌ Requesting 2 seats but only 1 available!
+            'room_type'      => 'AC Business Class',
+            'package_id'     => $limitedService->id,
+        ]);
+
+        $response->assertSessionHasErrors('seats');
+        $this->assertEquals(1, $limitedService->fresh()->available_seats);
+        $this->assertDatabaseCount('bookings', 0);
+    }
+
+    /** 20. Test Admin Booking Deletion Restores Package Seats */
+    public function test_admin_booking_deletion_restores_package_seats(): void
+    {
+        $service = Package::create([
+            'type'            => 'train',
+            'title'           => 'Suborno Express Intercity',
+            'from_location'   => 'Dhaka',
+            'to_location'     => 'Chittagong',
+            'departure_time'  => '07:00 AM',
+            'available_seats' => 20,
+            'price'           => 650.00,
+            'description'     => 'Non-stop intercity express train.',
+            'location'        => 'Chittagong',
+        ]);
+
+        // User books 4 seats
+        $this->actingAs($this->traveler)->post('/booking/store', [
+            'firstname'      => 'Efaz',
+            'email'          => 'user@travel.com',
+            'phone'          => '01812345678',
+            'transport_type' => 'train',
+            'from_city'      => 'Dhaka',
+            'to_city'        => 'Chittagong',
+            'journey_date'   => Carbon::tomorrow()->toDateString(),
+            'seats'          => 4,
+            'room_type'      => 'AC Business Class',
+            'package_id'     => $service->id,
+        ]);
+
+        $this->assertEquals(16, $service->fresh()->available_seats);
+        $booking = Booking::first();
+
+        // Admin deletes the booking
+        $deleteResponse = $this->actingAs($this->admin)->delete(route('bookings.destroy', $booking->id));
+        $deleteResponse->assertRedirect();
+
+        $this->assertDatabaseCount('bookings', 0);
+        // Seats must be restored from 16 back to 20
+        $this->assertEquals(20, $service->fresh()->available_seats);
+    }
+
+    /** 21. Test Custom Booking Uses Transport Type Default Pricing */
+    public function test_custom_booking_uses_transport_type_default_pricing(): void
+    {
+        $response = $this->actingAs($this->traveler)->post('/booking/store', [
+            'firstname'      => 'Efaz',
+            'email'          => 'user@travel.com',
+            'phone'          => '01812345678',
+            'transport_type' => 'flight',
+            'from_city'      => 'Dhaka',
+            'to_city'        => "Cox's Bazar",
+            'journey_date'   => Carbon::tomorrow()->toDateString(),
+            'seats'          => 2,
+            'room_type'      => 'AC Business Class',
+            // No package_id provided (Custom Booking)
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseCount('bookings', 1);
+
+        $booking = Booking::first();
+        $this->assertEquals(3800.00, $booking->unit_price);
+        $this->assertEquals(7600.00, $booking->total_price);
+    }
+
+    /** 22. Test Package image_url Accessor Fallbacks */
+    public function test_package_image_url_accessor(): void
+    {
+        $flight = Package::create([
+            'type' => 'flight', 'title' => 'Flight Test', 'location' => 'Dhaka', 'price' => 3800, 'description' => 'Test flight',
+        ]);
+        $train = Package::create([
+            'type' => 'train', 'title' => 'Train Test', 'location' => 'Dhaka', 'price' => 650, 'description' => 'Test train',
+        ]);
+        $tour = Package::create([
+            'type' => 'tour', 'title' => 'Tour Test', 'location' => 'Cox', 'price' => 2500, 'description' => 'Test tour',
+        ]);
+
+        $this->assertNotEmpty($flight->image_url);
+        $this->assertNotEmpty($train->image_url);
+        $this->assertNotEmpty($tour->image_url);
+        $this->assertStringContainsString('unsplash.com', $flight->image_url);
+    }
 }

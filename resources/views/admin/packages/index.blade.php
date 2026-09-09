@@ -26,6 +26,7 @@
             <div class="col-md-3">
                 <select name="type" class="form-select form-select-sm">
                     <option value="all">All Service Types</option>
+                    <option value="flight" {{ request('type') === 'flight' ? 'selected' : '' }}>✈️ Air Flight Tickets</option>
                     <option value="bus" {{ request('type') === 'bus' ? 'selected' : '' }}>🚌 Bus Tickets</option>
                     <option value="train" {{ request('type') === 'train' ? 'selected' : '' }}>🚆 Train Tickets</option>
                     <option value="tour" {{ request('type') === 'tour' ? 'selected' : '' }}>🏖️ Tour Packages</option>
@@ -62,17 +63,7 @@
                 @forelse($packages as $package)
                     <tr>
                         <td style="width: 80px;">
-                            @php
-                                $imgSrc = asset('assets/files/pac2.1.jpg');
-                                if ($package->image) {
-                                    if (file_exists(public_path('uploads/packages/' . $package->image))) {
-                                        $imgSrc = asset('uploads/packages/' . $package->image);
-                                    } elseif (file_exists(public_path('assets/files/' . $package->image))) {
-                                        $imgSrc = asset('assets/files/' . $package->image);
-                                    }
-                                }
-                            @endphp
-                            <img src="{{ $imgSrc }}" alt="{{ $package->title }}" class="rounded-3 shadow-sm" style="width: 70px; height: 50px; object-fit: cover;">
+                            <img src="{{ $package->image_url }}" alt="{{ $package->title }}" class="rounded-3 shadow-sm" style="width: 70px; height: 50px; object-fit: cover;">
                         </td>
                         <td>
                             <span class="badge {{ $package->type === 'bus' ? 'bg-warning text-dark' : ($package->type === 'train' ? 'bg-danger text-white' : 'bg-primary') }} text-uppercase px-2 py-1 rounded">

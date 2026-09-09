@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class BookingController extends Controller
@@ -32,6 +33,7 @@ class BookingController extends Controller
             'from_city'        => 'nullable|string|max:100',
             'to_city'          => 'nullable|string|max:100',
             'package_id'       => 'nullable|exists:packages,id',
+            'package_price'    => 'nullable|numeric|min:50|max:100000',
             'additional'       => 'nullable|string|max:1000',
         ], [
             'journey_date.after_or_equal' => 'Booking date must be today or an upcoming date. Past dates are not permitted.',
@@ -39,27 +41,46 @@ class BookingController extends Controller
             'return_date.after_or_equal'  => 'Return date must be equal to or after the departure date.',
         ]);
 
-        // 2. Verified Server-Side Pricing (Zero Forgery)
+        $seats = (int) $request->seats;
+
+        // 2. Verified Server-Side Pricing & Capacity Check (Zero Forgery & No Overselling)
         $package = null;
-        $unitPrice = 1000.00;
-        $title = 'Custom Travel Ticket';
         $fromCity = $request->from_city ?? 'Dhaka';
         $toCity = $request->to_city ?? 'Destination';
 
         if ($request->filled('package_id')) {
             $package = Package::find($request->package_id);
             if ($package) {
+                // Gate against overselling seats
+                if ($package->available_seats < $seats) {
+                    return back()->withErrors([
+                        'seats' => "Sorry, only {$package->available_seats} seat(s) are currently available for this service.",
+                    ])->withInput();
+                }
+
                 $unitPrice = (float) $package->price;
                 $title = $package->title;
                 $fromCity = $request->filled('from_city') ? $request->from_city : ($package->from_location ?? $fromCity);
                 $toCity = $request->filled('to_city') ? $request->to_city : ($package->to_location ?? $package->location ?? $toCity);
             }
-        } elseif ($request->filled('package_price') && is_numeric($request->package_price)) {
-            $unitPrice = (float) $request->package_price;
-            $title = $request->package_title ?? $title;
+        } else {
+            // Category standard base prices for custom tickets
+            $defaultPrices = [
+                'flight' => 3800.00,
+                'bus'    => 1200.00,
+                'train'  => 650.00,
+                'tour'   => 2500.00,
+            ];
+            $defaultPrice = $defaultPrices[$request->transport_type] ?? 1000.00;
+
+            if ($request->filled('package_price') && is_numeric($request->package_price) && $request->package_price >= 50) {
+                $unitPrice = (float) $request->package_price;
+            } else {
+                $unitPrice = $defaultPrice;
+            }
+            $title = $request->package_title ?? (ucfirst($request->transport_type) . ' Travel Ticket');
         }
 
-        $seats = (int) $request->seats;
         $isRoundTrip = ($request->input('trip_mode') === 'roundtrip') || ($request->filled('return_date') && $request->input('trip_mode') !== 'oneway');
 
         $returnDate = $request->return_date;
@@ -101,47 +122,54 @@ class BookingController extends Controller
         // Format seat string if provided
         $selectedSeats = $request->filled('selected_seats') ? trim($request->selected_seats) : null;
 
-        // 4. Save Booking record
-        $booking = Booking::create([
-            'user_id'          => auth()->id(),
-            'package_id'       => $package ? $package->id : null,
-            'booking_code'     => $bookingCode,
-            'transport_type'   => $request->transport_type,
-            'passenger_name'   => trim($request->firstname . ' ' . $request->lastname),
-            'firstname'        => $request->firstname,
-            'lastname'         => $request->lastname,
-            'email'            => $request->email,
-            'phone'            => $request->phone,
-            'journey_date'     => $request->journey_date,
-            'return_date'      => $returnDate,
-            'check_in_date'    => $request->journey_date, // backward compatibility
-            'check_out_date'   => $returnDate ?? $request->journey_date,
-            'from_city'        => $fromCity,
-            'to_city'          => $toCity,
-            'destination'      => $toCity,
-            'accommodation'    => $request->accommodation ?? 'Standard',
-            'rooms'            => $seats,
-            'seats'            => $seats,
-            'selected_seats'   => $selectedSeats,
-            'room_type'        => $request->room_type ?? 'Standard Class',
-            'promo_code'       => $appliedPromo,
-            'discount_amount'  => $discountAmount,
-            'unit_price'       => $unitPrice,
-            'total_price'      => $totalPrice,
-            'package_price'    => $unitPrice,
-            'package_title'    => $title,
-            'package_location' => $toCity,
-            'status'           => 'confirmed', // Confirmed booking
-            'payment_status'   => 'unpaid',
-            'refund_status'    => 'none',
-            'special_notes'    => $request->additional,
-            'additional'       => $request->additional,
-        ]);
+        // 4. Save Booking record inside atomic transaction
+        $booking = DB::transaction(function () use (
+            $request, $package, $bookingCode, $returnDate, $fromCity, $toCity,
+            $seats, $selectedSeats, $appliedPromo, $discountAmount, $unitPrice, $totalPrice, $title
+        ) {
+            $bookingRecord = Booking::create([
+                'user_id'          => auth()->id(),
+                'package_id'       => $package ? $package->id : null,
+                'booking_code'     => $bookingCode,
+                'transport_type'   => $request->transport_type,
+                'passenger_name'   => trim($request->firstname . ' ' . $request->lastname),
+                'firstname'        => $request->firstname,
+                'lastname'         => $request->lastname,
+                'email'            => $request->email,
+                'phone'            => $request->phone,
+                'journey_date'     => $request->journey_date,
+                'return_date'      => $returnDate,
+                'check_in_date'    => $request->journey_date, // backward compatibility
+                'check_out_date'   => $returnDate ?? $request->journey_date,
+                'from_city'        => $fromCity,
+                'to_city'          => $toCity,
+                'destination'      => $toCity,
+                'accommodation'    => $request->accommodation ?? 'Standard',
+                'rooms'            => $seats,
+                'seats'            => $seats,
+                'selected_seats'   => $selectedSeats,
+                'room_type'        => $request->room_type ?? 'Standard Class',
+                'promo_code'       => $appliedPromo,
+                'discount_amount'  => $discountAmount,
+                'unit_price'       => $unitPrice,
+                'total_price'      => $totalPrice,
+                'package_price'    => $unitPrice,
+                'package_title'    => $title,
+                'package_location' => $toCity,
+                'status'           => 'confirmed', // Confirmed booking
+                'payment_status'   => 'unpaid',
+                'refund_status'    => 'none',
+                'special_notes'    => $request->additional,
+                'additional'       => $request->additional,
+            ]);
 
-        // Deduct available seats if package attached
-        if ($package && $package->available_seats >= $seats) {
-            $package->decrement('available_seats', $seats);
-        }
+            // Deduct available seats if package attached
+            if ($package && $package->available_seats >= $seats) {
+                $package->decrement('available_seats', $seats);
+            }
+
+            return $bookingRecord;
+        });
 
         // 5. Redirect straight to checkout/invoice page
         $successMsg = "Ticket {$bookingCode} booked successfully!";
@@ -237,15 +265,17 @@ class BookingController extends Controller
 
         $reason = $request->input('reason') ?: ($request->input('cancel_reason') ?: 'Cancelled by passenger');
 
-        $booking->status = 'cancelled';
-        $booking->refund_status = ($booking->payment_status === 'paid') ? 'requested' : 'none';
-        $booking->cancellation_reason = $reason;
-        $booking->save();
+        DB::transaction(function () use ($booking, $reason) {
+            $booking->status = 'cancelled';
+            $booking->refund_status = ($booking->payment_status === 'paid') ? 'requested' : 'none';
+            $booking->cancellation_reason = $reason;
+            $booking->save();
 
-        // Restore seats
-        if ($booking->package_id) {
-            Package::where('id', $booking->package_id)->increment('available_seats', $booking->seats);
-        }
+            // Restore seats
+            if ($booking->package_id) {
+                Package::where('id', $booking->package_id)->increment('available_seats', $booking->seats);
+            }
+        });
 
         $msg = ($booking->payment_status === 'paid')
             ? 'Your booking has been cancelled and a refund request has been submitted to the admin team.'

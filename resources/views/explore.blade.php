@@ -160,22 +160,7 @@
                     <div class="travel-card">
                         <!-- Card Media -->
                         <div class="travel-card-img-wrap">
-                            @php
-                                $imgSrc = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80';
-                                if ($item->type === 'train') {
-                                    $imgSrc = 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=800&q=80';
-                                } elseif ($item->type === 'tour') {
-                                    $imgSrc = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80';
-                                }
-                                if ($item->image) {
-                                    if (file_exists(public_path('uploads/packages/' . $item->image))) {
-                                        $imgSrc = asset('uploads/packages/' . $item->image);
-                                    } elseif (file_exists(public_path('assets/files/' . $item->image))) {
-                                        $imgSrc = asset('assets/files/' . rawurlencode($item->image));
-                                    }
-                                }
-                            @endphp
-                            <img src="{{ $imgSrc }}" alt="{{ $item->title }}" onerror="this.src='https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80'">
+                            <img src="{{ $item->image_url }}" alt="{{ $item->title }}" onerror="this.src='https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80'">
 
                             <div class="travel-card-badge">
                                 @if($item->type === 'flight')

@@ -19,7 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
             '/fail',
             '/cancel',
             '/ipn',
-            '/pay-now',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

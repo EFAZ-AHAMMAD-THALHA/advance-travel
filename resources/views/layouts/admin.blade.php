@@ -341,6 +341,14 @@
                 </div>
             @endif
 
+            @if(session('info'))
+                <div class="alert alert-info alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+                    <i class='bx bxs-info-circle me-2 fs-5 align-middle'></i>
+                    <strong>Notice:</strong> {{ session('info') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
             @yield('content')
         </main>
     </div>

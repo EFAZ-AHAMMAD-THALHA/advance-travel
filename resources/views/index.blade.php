@@ -325,20 +325,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="travel-card">
                         <div class="travel-card-img-wrap">
-                            @php
-                                $img = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80';
-                                if ($ticket->type === 'train') {
-                                    $img = 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=800&q=80';
-                                }
-                                if ($ticket->image) {
-                                    if (file_exists(public_path('uploads/packages/' . $ticket->image))) {
-                                        $img = asset('uploads/packages/' . $ticket->image);
-                                    } elseif (file_exists(public_path('assets/files/' . $ticket->image))) {
-                                        $img = asset('assets/files/' . $ticket->image);
-                                    }
-                                }
-                            @endphp
-                            <img src="{{ $img }}" alt="{{ $ticket->title }}">
+                            <img src="{{ $ticket->image_url }}" alt="{{ $ticket->title }}">
                             
                             <div class="travel-card-badge">
                                 @if($ticket->type === 'bus')
@@ -414,17 +401,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="travel-card">
                         <div class="travel-card-img-wrap">
-                            @php
-                                $img = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80';
-                                if ($pkg->image) {
-                                    if (file_exists(public_path('uploads/packages/' . $pkg->image))) {
-                                        $img = asset('uploads/packages/' . $pkg->image);
-                                    } elseif (file_exists(public_path('assets/files/' . $pkg->image))) {
-                                        $img = asset('assets/files/' . $pkg->image);
-                                    }
-                                }
-                            @endphp
-                            <img src="{{ $img }}" alt="{{ $pkg->title }}">
+                            <img src="{{ $pkg->image_url }}" alt="{{ $pkg->title }}">
                             
                             <div class="travel-card-badge">
                                 <span class="badge badge-pill badge-tour"><i class='bx bx-star'></i> Tour</span>
