@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="text-end mt-2 mt-sm-0">
-                    <span class="badge {{ $booking->transport_type === 'bus' ? 'badge-bus' : ($booking->transport_type === 'train' ? 'badge-train' : 'badge-tour') }} badge-pill mb-1">
+                    <span class="badge {{ $booking->transport_type === 'flight' ? 'badge-flight' : ($booking->transport_type === 'bus' ? 'badge-bus' : ($booking->transport_type === 'train' ? 'badge-train' : 'badge-tour')) }} badge-pill mb-1">
                         {{ strtoupper($booking->transport_type) }} TICKET
                     </span>
                     <div class="font-monospace text-light small">PNR: <strong>{{ $booking->booking_code }}</strong></div>

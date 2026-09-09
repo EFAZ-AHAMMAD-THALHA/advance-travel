@@ -68,12 +68,15 @@
                         </div>
 
                         <!-- Password & Confirm Password Grid -->
-                        <div class="row g-3 mb-3">
+                        <div class="row g-3 mb-2">
                             <div class="col-md-6">
                                 <label class="form-label" for="password">Password <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-secondary"><i class='bx bx-lock-alt'></i></span>
-                                    <input type="password" id="password" name="password" class="form-control" placeholder="Min 6 chars" required>
+                                    <input type="password" id="password" name="password" class="form-control" placeholder="Min 8 characters" data-password-strength data-confirm-input="password_confirmation" required>
+                                    <button class="btn btn-outline-secondary toggle-password-btn" type="button" data-target="password" title="Toggle password visibility">
+                                        <i class='bx bx-hide'></i>
+                                    </button>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -81,7 +84,30 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-secondary"><i class='bx bx-lock-check'></i></span>
                                     <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Re-enter password" required>
+                                    <button class="btn btn-outline-secondary toggle-password-btn" type="button" data-target="password_confirmation" title="Toggle password visibility">
+                                        <i class='bx bx-hide'></i>
+                                    </button>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Password Strength Meter & Requirements -->
+                        <div class="p-3.5 bg-slate-100 rounded-3 mb-3.5 border shadow-sm">
+                            <div class="d-flex align-items-center mb-1.5">
+                                <span class="small text-secondary fw-semibold">Security Score:</span>
+                                <span class="password-strength-text small ms-auto fw-bold text-secondary">Password Required</span>
+                            </div>
+                            <div class="progress mb-3 rounded-pill bg-slate-200" style="height: 7px;">
+                                <div class="progress-bar password-strength-bar bg-secondary rounded-pill" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                            <div class="row g-2 text-secondary">
+                                <div class="col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="length"><i class='bx bx-circle me-1 opacity-50'></i> Min 8 characters</div></div>
+                                <div class="col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="uppercase"><i class='bx bx-circle me-1 opacity-50'></i> Uppercase (A-Z)</div></div>
+                                <div class="col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="lowercase"><i class='bx bx-circle me-1 opacity-50'></i> Lowercase (a-z)</div></div>
+                                <div class="col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="number"><i class='bx bx-circle me-1 opacity-50'></i> Number (0-9)</div></div>
+                                <div class="col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="special"><i class='bx bx-circle me-1 opacity-50'></i> Special (!@#$)</div></div>
+                                <div class="col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="match"><i class='bx bx-circle me-1 opacity-50'></i> Match confirmation</div></div>
                             </div>
                         </div>
 
@@ -111,4 +137,5 @@
     </div>
 </div>
 
+<script src="{{ asset('js/password-validator.js') }}"></script>
 @endsection

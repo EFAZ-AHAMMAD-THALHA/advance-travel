@@ -34,6 +34,7 @@
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Service Type *</label>
                         <select name="type" class="form-select rounded-3" required>
+                            <option value="flight" {{ old('type') == 'flight' ? 'selected' : '' }}>✈️ Air Flight Ticket</option>
                             <option value="bus" {{ old('type') == 'bus' ? 'selected' : '' }}>🚌 Bus Ticket</option>
                             <option value="train" {{ old('type') == 'train' ? 'selected' : '' }}>🚆 Train Ticket</option>
                             <option value="tour" {{ old('type') == 'tour' ? 'selected' : '' }}>🏖️ Tour Package</option>

@@ -41,7 +41,7 @@ class PackageController extends Controller
     {
         $validated = $request->validate([
             'title'           => 'required|string|max:255',
-            'type'            => 'required|in:bus,train,tour',
+            'type'            => 'required|in:flight,bus,train,tour',
             'from_location'   => 'nullable|string|max:100',
             'to_location'     => 'nullable|string|max:100',
             'departure_time'  => 'nullable|string|max:50',
@@ -81,7 +81,7 @@ class PackageController extends Controller
     {
         $validated = $request->validate([
             'title'           => 'required|string|max:255',
-            'type'            => 'required|in:bus,train,tour',
+            'type'            => 'required|in:flight,bus,train,tour',
             'from_location'   => 'nullable|string|max:100',
             'to_location'     => 'nullable|string|max:100',
             'departure_time'  => 'nullable|string|max:50',

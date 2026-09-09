@@ -39,8 +39,46 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Seed Multi-Modal Travel Services (Bus, Train & Tour Packages)
+        // 2. Seed Multi-Modal Travel Services (Flight, Bus, Train & Tour Packages)
         $services = [
+            // FLIGHT TICKETS
+            [
+                'type'            => 'flight',
+                'title'           => 'Biman Bangladesh BG-401 Dreamliner',
+                'from_location'   => 'Dhaka',
+                'to_location'     => "Cox's Bazar",
+                'departure_time'  => '10:15 AM',
+                'available_seats' => 14,
+                'price'           => 4500.00,
+                'description'     => 'Non-stop premium Boeing 787-9 Dreamliner flight from Hazrat Shahjalal International Airport (DAC) to Cox\'s Bazar Airport (CXB).',
+                'image'           => 'pac2.1.jpg',
+                'location'        => "Cox's Bazar",
+            ],
+            [
+                'type'            => 'flight',
+                'title'           => 'US-Bangla BS-201 Premium Express',
+                'from_location'   => 'Dhaka',
+                'to_location'     => 'Chattogram (Chittagong)',
+                'departure_time'  => '11:45 AM',
+                'available_seats' => 8,
+                'price'           => 3800.00,
+                'description'     => 'Comfortable ATR 72-600 flight with free baggage allowance and onboard refreshments.',
+                'image'           => 'pack5.2.jpg',
+                'location'        => 'Chattogram',
+            ],
+            [
+                'type'            => 'flight',
+                'title'           => 'Air Astra 2A-502 Direct Shuttle',
+                'from_location'   => 'Dhaka',
+                'to_location'     => 'Sylhet',
+                'departure_time'  => '02:30 PM',
+                'available_seats' => 22,
+                'price'           => 4100.00,
+                'description'     => 'Daily afternoon express flight to Sylhet Osmani International Airport.',
+                'image'           => 'package3.1.jpg',
+                'location'        => 'Sylhet',
+            ],
+
             // BUS TICKETS
             [
                 'type'            => 'bus',

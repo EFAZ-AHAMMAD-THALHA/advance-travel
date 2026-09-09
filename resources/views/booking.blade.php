@@ -51,7 +51,7 @@
                     @if($package)
                         <div class="bg-white rounded-4 border p-4 shadow-sm mb-4">
                             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
-                                <span class="badge {{ ($package->type ?? 'tour') === 'bus' ? 'badge-bus' : (($package->type ?? 'tour') === 'train' ? 'badge-train' : 'badge-tour') }} badge-pill">
+                                <span class="badge {{ ($package->type ?? 'tour') === 'flight' ? 'badge-flight' : (($package->type ?? 'tour') === 'bus' ? 'badge-bus' : (($package->type ?? 'tour') === 'train' ? 'badge-train' : 'badge-tour')) }} badge-pill">
                                     {{ strtoupper($package->type ?? 'tour') }} SERVICE
                                 </span>
                                 <span class="text-success fw-bold fs-5">৳{{ number_format($package->price, 0) }} / seat</span>
@@ -97,6 +97,7 @@
                             <div class="col-md-4">
                                 <label class="form-label">Transport Category <span class="text-danger">*</span></label>
                                 <select name="transport_type" class="form-select" id="transportTypeSelect" required>
+                                    <option value="flight" {{ (old('transport_type') == 'flight' || ($package->type ?? '') == 'flight') ? 'selected' : '' }}>✈️ Air Flight Express</option>
                                     <option value="bus" {{ (old('transport_type') == 'bus' || ($package->type ?? '') == 'bus') ? 'selected' : '' }}>🚌 AC Bus Fleet</option>
                                     <option value="train" {{ (old('transport_type') == 'train' || ($package->type ?? '') == 'train') ? 'selected' : '' }}>🚆 Intercity Train</option>
                                     <option value="tour" {{ (old('transport_type') == 'tour' || ($package->type ?? '') == 'tour') ? 'selected' : '' }}>🏖️ Tour Package</option>

@@ -68,7 +68,7 @@
                             <h4 class="fw-bold text-dark font-monospace mb-0">{{ $booking->booking_code }}</h4>
                         </div>
                         <div class="text-end">
-                            <span class="badge {{ $booking->transport_type === 'bus' ? 'badge-bus' : ($booking->transport_type === 'train' ? 'badge-train' : 'badge-tour') }} badge-pill fs-6 px-3 py-1.5">
+                            <span class="badge {{ $booking->transport_type === 'flight' ? 'badge-flight' : ($booking->transport_type === 'bus' ? 'badge-bus' : ($booking->transport_type === 'train' ? 'badge-train' : 'badge-tour')) }} badge-pill fs-6 px-3 py-1.5">
                                 {{ strtoupper($booking->transport_type) }} FLEET
                             </span>
                         </div>

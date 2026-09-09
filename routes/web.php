@@ -23,6 +23,9 @@ Route::get('/info', [PageController::class, 'info'])->name('info');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact-message', [ContactMessageController::class, 'store'])->name('contact.store');
 
+// Live Dynamic Flight Status API Endpoint
+Route::get('/api/flight-status', [PageController::class, 'liveFlightStatus'])->name('flight.status');
+
 // Public Ticket & Boarding Pass QR Verification Portal
 Route::get('/verify-ticket/{code?}', [BookingController::class, 'verifyTicket'])->name('booking.verify');
 

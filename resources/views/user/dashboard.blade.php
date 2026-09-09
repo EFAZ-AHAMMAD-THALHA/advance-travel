@@ -128,7 +128,7 @@
                                                     <a href="{{ route('booking.ticket', $b->id) }}" class="fw-bold text-primary font-monospace">
                                                         {{ $b->booking_code }}
                                                     </a>
-                                                    <span class="badge {{ $b->transport_type === 'bus' ? 'badge-bus' : ($b->transport_type === 'train' ? 'badge-train' : 'badge-tour') }} badge-pill d-block mt-1" style="font-size: 0.65rem;">
+                                                    <span class="badge {{ $b->transport_type === 'flight' ? 'badge-flight' : ($b->transport_type === 'bus' ? 'badge-bus' : ($b->transport_type === 'train' ? 'badge-train' : 'badge-tour')) }} badge-pill d-block mt-1" style="font-size: 0.65rem;">
                                                         {{ strtoupper($b->transport_type) }}
                                                     </span>
                                                 </td>

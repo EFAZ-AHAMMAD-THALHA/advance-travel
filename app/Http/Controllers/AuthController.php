@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
@@ -36,7 +37,12 @@ class AuthController extends Controller
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'phone'    => ['nullable', 'string', 'regex:/^(?:\+?88|01)?\d{9,11}$/'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                Password::min(8)->letters()->mixedCase()->numbers()->symbols()
+            ],
             'terms'    => ['accepted'],
         ], [
             'phone.regex'    => 'Please enter a valid phone number (e.g. 017xxxxxxxx or +8801xxxxxxxxx).',

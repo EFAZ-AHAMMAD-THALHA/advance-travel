@@ -35,6 +35,7 @@
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Service Type *</label>
                         <select name="type" class="form-select rounded-3" required>
+                            <option value="flight" {{ old('type', $package->type) == 'flight' ? 'selected' : '' }}>✈️ Air Flight Ticket</option>
                             <option value="bus" {{ old('type', $package->type) == 'bus' ? 'selected' : '' }}>🚌 Bus Ticket</option>
                             <option value="train" {{ old('type', $package->type) == 'train' ? 'selected' : '' }}>🚆 Train Ticket</option>
                             <option value="tour" {{ old('type', $package->type) == 'tour' ? 'selected' : '' }}>🏖️ Tour Package</option>

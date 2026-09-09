@@ -12,7 +12,7 @@
             <!-- Header -->
             <div class="ticket-header d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="badge {{ $booking->transport_type === 'bus' ? 'badge-bus' : ($booking->transport_type === 'train' ? 'badge-train' : 'badge-tour') }} badge-pill mb-2">
+                    <span class="badge {{ $booking->transport_type === 'flight' ? 'badge-flight' : ($booking->transport_type === 'bus' ? 'badge-bus' : ($booking->transport_type === 'train' ? 'badge-train' : 'badge-tour')) }} badge-pill mb-2">
                         {{ strtoupper($booking->transport_type) }} TICKET
                     </span>
                     <h4 class="fw-bold mb-0 text-white">{{ $booking->package_title ?? 'Travel Reservation' }}</h4>

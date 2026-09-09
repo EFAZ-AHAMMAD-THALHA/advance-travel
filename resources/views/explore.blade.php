@@ -34,6 +34,10 @@
                        class="btn btn-sm rounded-pill px-3.5 py-1.5 fw-semibold {{ (!request('type') || request('type') == 'all') ? 'btn-primary' : 'btn-outline-secondary' }}">
                         <i class='bx bx-grid-alt me-1'></i>All Modes
                     </a>
+                    <a href="{{ route('explore', array_merge(request()->except('type', 'page'), ['type' => 'flight'])) }}"
+                       class="btn btn-sm rounded-pill px-3.5 py-1.5 fw-semibold {{ request('type') == 'flight' ? 'btn-primary' : 'btn-outline-secondary' }}">
+                        <i class='bx bxs-plane-alt me-1'></i>Air Flights
+                    </a>
                     <a href="{{ route('explore', array_merge(request()->except('type', 'page'), ['type' => 'bus'])) }}"
                        class="btn btn-sm rounded-pill px-3.5 py-1.5 fw-semibold {{ request('type') == 'bus' ? 'btn-primary' : 'btn-outline-secondary' }}">
                         <i class='bx bx-bus me-1'></i>Bus Tickets
@@ -174,7 +178,9 @@
                             <img src="{{ $imgSrc }}" alt="{{ $item->title }}" onerror="this.src='https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80'">
 
                             <div class="travel-card-badge">
-                                @if($item->type === 'bus')
+                                @if($item->type === 'flight')
+                                    <span class="badge badge-pill badge-flight"><i class='bx bxs-plane-alt'></i> FLIGHT</span>
+                                @elseif($item->type === 'bus')
                                     <span class="badge badge-pill badge-bus"><i class='bx bx-bus'></i> BUS</span>
                                 @elseif($item->type === 'train')
                                     <span class="badge badge-pill badge-train"><i class='bx bx-train'></i> TRAIN</span>

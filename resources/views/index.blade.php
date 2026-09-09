@@ -65,48 +65,38 @@
 
             <!-- Right Hero Visual / Quick Actions Card -->
             <div class="col-lg-5 d-none d-lg-block">
-                <div class="p-4 rounded-4 shadow-2xl position-relative overflow-hidden" style="background: rgba(255, 255, 255, 0.06); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15);">
+                <div class="glass-radar-card p-4 rounded-4 shadow-2xl position-relative overflow-hidden">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="badge bg-success rounded-pill px-3 py-1 fw-bold">Live Fleet Status</span>
-                        <span class="text-white-50 small"><i class='bx bx-time-five me-1'></i>Updated Live</span>
-                    </div>
-
-                    <div class="p-3 rounded-3 mb-3 bg-white bg-opacity-10 border border-white border-opacity-10">
-                        <div class="d-flex justify-content-between align-items-center text-white">
-                            <div>
-                                <div class="small text-info fw-bold">SCANIA MULTI-AXLE AC</div>
-                                <div class="fw-bold fs-6">Dhaka ➔ Cox's Bazar</div>
-                            </div>
-                            <div class="text-end">
-                                <div class="text-success fw-bold">৳1,800</div>
-                                <div class="badge bg-primary rounded-pill" style="font-size: 0.7rem;">Seats Ready</div>
-                            </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge badge-neon-success rounded-pill px-3 py-1.5 fw-bold d-flex align-items-center gap-1.5">
+                                <span class="beacon-dot"></span>
+                                <i class='bx bx-radar me-0.5'></i>Live Flight & Fleet Radar
+                            </span>
+                            <button id="btnRefreshFlightStatus" class="btn btn-xs btn-outline-light rounded-circle p-1" title="Refresh Live Flight Status">
+                                <i class='bx bx-refresh fs-6'></i>
+                            </button>
                         </div>
+                        <span id="flightLastUpdatedText" class="text-white-50 small" style="font-size: 0.72rem;">
+                            <i class='bx bx-time-five me-1'></i>Updated Live
+                        </span>
                     </div>
 
-                    <div class="p-3 rounded-3 mb-3 bg-white bg-opacity-10 border border-white border-opacity-10">
-                        <div class="d-flex justify-content-between align-items-center text-white">
-                            <div>
-                                <div class="small text-warning fw-bold">SUBORNA EXPRESS TRAIN</div>
-                                <div class="fw-bold fs-6">Dhaka ➔ Chittagong</div>
-                            </div>
-                            <div class="text-end">
-                                <div class="text-success fw-bold">৳950</div>
-                                <div class="badge bg-warning text-dark rounded-pill" style="font-size: 0.7rem;">AC Snigdha</div>
-                            </div>
-                        </div>
+                    <!-- Live Flight Quick Search Bar -->
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text bg-white bg-opacity-10 text-info border-white border-opacity-15">
+                            <i class='bx bxs-plane-alt'></i>
+                        </span>
+                        <input type="text" id="flightSearchInput" class="form-control bg-white bg-opacity-10 text-white border-white border-opacity-15 placeholder-white-50" placeholder="Search Flight No. (e.g. BG-401, BS-201)..." style="font-size: 0.8rem;">
+                        <button id="btnSearchFlight" class="btn btn-primary btn-sm px-3 fw-bold shadow-sm" type="button">
+                            <i class='bx bx-search-alt me-0.5'></i>Status
+                        </button>
                     </div>
 
-                    <div class="p-3 rounded-3 bg-white bg-opacity-10 border border-white border-opacity-10">
-                        <div class="d-flex justify-content-between align-items-center text-white">
-                            <div>
-                                <div class="small text-success fw-bold">SAJEK VALLEY RETREAT</div>
-                                <div class="fw-bold fs-6">3 Days Resort & Safari</div>
-                            </div>
-                            <div class="text-end">
-                                <div class="text-success fw-bold">৳7,500</div>
-                                <div class="badge bg-success rounded-pill" style="font-size: 0.7rem;">All Inclusive</div>
-                            </div>
+                    <!-- Dynamic Live Status Container -->
+                    <div id="liveFlightStatusContainer" style="min-height: 220px;">
+                        <div class="p-4 text-center text-white-50">
+                            <i class='bx bx-loader-alt bx-spin fs-2 mb-2 text-info d-block'></i>
+                            <span class="small">Connecting to live flight radar...</span>
                         </div>
                     </div>
                 </div>
@@ -126,6 +116,12 @@
                             <input type="radio" class="btn-check" name="type" id="searchAll" value="all" checked>
                             <label class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" for="searchAll">
                                 <i class='bx bx-grid-alt me-1'></i>All Modes
+                            </label>
+                        </li>
+                        <li class="nav-item">
+                            <input type="radio" class="btn-check" name="type" id="searchFlight" value="flight">
+                            <label class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" for="searchFlight">
+                                <i class='bx bxs-plane-alt me-1'></i>Air Flight
                             </label>
                         </li>
                         <li class="nav-item">
@@ -593,5 +589,83 @@
     </div>
 </section>
 
+<!-- LIVE FLIGHT TELEMETRY RADAR MODAL -->
+<div class="modal fade telemetry-hud-modal" id="liveFlightModal" tabindex="-1" aria-labelledby="modalFlightTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-2xl rounded-4 overflow-hidden" style="background: #090d16; color: #ffffff;">
+            <!-- Modal Header -->
+            <div class="modal-header border-bottom border-white border-opacity-10 p-4" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="brand-icon-box bg-primary text-white" style="width: 44px; height: 44px; font-size: 1.4rem;">
+                        <i class='bx bxs-plane-alt'></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="modal-title fw-bold text-white mb-0" id="modalFlightTitle">Flight Telemetry</h5>
+                            <span id="modalFlightStatusBadge" class="badge bg-success rounded-pill px-3 py-1">ON TIME</span>
+                        </div>
+                        <small class="text-white-50" id="modalFlightRoute">Dhaka (DAC) ➔ Cox's Bazar (CXB)</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
+            <!-- Modal Body -->
+            <div class="modal-body p-4">
+                <!-- Flight Progress Tracker Bar -->
+                <div class="p-3 bg-white bg-opacity-10 rounded-3 mb-4 border border-white border-opacity-10">
+                    <div class="d-flex justify-content-between text-white-50 small mb-1">
+                        <span><i class='bx bx-radio-circle-marked text-success me-1'></i>Departed: <strong class="text-white" id="modalDepTime">10:15 AM</strong></span>
+                        <span><i class='bx bx-flag text-info me-1'></i>Est. Arrival: <strong class="text-white" id="modalArrTime">11:15 AM</strong></span>
+                    </div>
+                    <div class="progress position-relative my-2" style="height: 10px; background: rgba(255,255,255,0.15);">
+                        <div id="modalFlightProgressBar" class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: 45%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between text-white-50" style="font-size: 0.75rem;">
+                        <span id="modalAircraft">Boeing 787-9 Dreamliner</span>
+                        <span id="modalSeatsLeft" class="text-success fw-bold">14 seats available</span>
+                    </div>
+                </div>
+
+                <!-- Telemetry Metrics Grid -->
+                <div class="row g-3">
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 bg-white bg-opacity-10 rounded-3 text-center border border-white border-opacity-10">
+                            <small class="text-white-50 d-block mb-1 font-mono">Terminal / Gate</small>
+                            <span class="fw-bold text-info fs-6" id="modalGate">T2 / G04</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 bg-white bg-opacity-10 rounded-3 text-center border border-white border-opacity-10">
+                            <small class="text-white-50 d-block mb-1 font-mono">Current Altitude</small>
+                            <span class="fw-bold text-success fs-6" id="modalAltitude">28,500 ft</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 bg-white bg-opacity-10 rounded-3 text-center border border-white border-opacity-10">
+                            <small class="text-white-50 d-block mb-1 font-mono">Air Speed</small>
+                            <span class="fw-bold text-warning fs-6" id="modalSpeed">740 km/h</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 bg-white bg-opacity-10 rounded-3 text-center border border-white border-opacity-10">
+                            <small class="text-white-50 d-block mb-1 font-mono">GPS Radar Sync</small>
+                            <span class="fw-bold text-primary fs-6"><i class='bx bx-radar bx-spin text-danger me-1'></i>ACTIVE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer Action Buttons -->
+            <div class="modal-footer border-top border-white border-opacity-10 p-3 bg-dark bg-opacity-50">
+                <button type="button" class="btn btn-outline-light px-4 rounded-pill" data-bs-dismiss="modal">Close Radar</button>
+                <a id="modalBookFlightBtn" href="/booking" class="btn btn-success px-4 rounded-pill fw-bold">
+                    <i class='bx bx-check-circle me-1'></i> Book Flight Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ asset('js/live-flight-tracker.js') }}"></script>
 @endsection

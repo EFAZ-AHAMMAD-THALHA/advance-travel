@@ -164,4 +164,116 @@ class PageController extends Controller
 
         return view('booking', compact('package'));
     }
+
+    /**
+     * Dynamic Live Flight & Transport Status Endpoint
+     */
+    public function liveFlightStatus(Request $request)
+    {
+        $search = strtolower(trim((string) $request->input('query', '')));
+
+        $flights = [
+            [
+                'id'             => 'FL-101',
+                'flight_number'  => 'BG-401',
+                'airline'        => 'Biman Bangladesh Airlines',
+                'aircraft'       => 'Boeing 787-9 Dreamliner',
+                'type'           => 'flight',
+                'origin'         => 'Dhaka (DAC)',
+                'destination'    => "Cox's Bazar (CXB)",
+                'departure_time' => '10:15 AM',
+                'arrival_time'   => '11:15 AM',
+                'status'         => 'ON TIME',
+                'status_color'   => 'success',
+                'terminal'       => 'T2',
+                'gate'           => 'G04',
+                'altitude'       => '28,500 ft',
+                'speed'          => '740 km/h',
+                'price'          => 4500,
+                'seats_left'     => 14,
+                'progress_pct'   => 45,
+                'is_bookable'    => true,
+            ],
+            [
+                'id'             => 'FL-102',
+                'flight_number'  => 'BS-201',
+                'airline'        => 'US-Bangla Airlines',
+                'aircraft'       => 'ATR 72-600',
+                'type'           => 'flight',
+                'origin'         => 'Dhaka (DAC)',
+                'destination'    => 'Chittagong (CGP)',
+                'departure_time' => '11:45 AM',
+                'arrival_time'   => '12:35 PM',
+                'status'         => 'BOARDING',
+                'status_color'   => 'warning',
+                'terminal'       => 'T1',
+                'gate'           => 'G12',
+                'altitude'       => '0 ft (On Ground)',
+                'speed'          => '0 km/h',
+                'price'          => 3800,
+                'seats_left'     => 0,
+                'progress_pct'   => 15,
+                'is_bookable'    => false,
+            ],
+            [
+                'id'             => 'FL-103',
+                'flight_number'  => '2A-502',
+                'airline'        => 'Air Astra',
+                'aircraft'       => 'ATR 72-600 Express',
+                'type'           => 'flight',
+                'origin'         => 'Dhaka (DAC)',
+                'destination'    => 'Sylhet (ZYL)',
+                'departure_time' => '02:30 PM',
+                'arrival_time'   => '03:20 PM',
+                'status'         => 'IN FLIGHT',
+                'status_color'   => 'info',
+                'terminal'       => 'T1',
+                'gate'           => 'G02',
+                'altitude'       => '18,500 ft',
+                'speed'          => '520 km/h',
+                'price'          => 4100,
+                'seats_left'     => 0,
+                'progress_pct'   => 70,
+                'is_bookable'    => false,
+            ],
+            [
+                'id'             => 'FL-104',
+                'flight_number'  => 'BG-603',
+                'airline'        => 'Biman Bangladesh Airlines',
+                'aircraft'       => 'Dash 8-Q400',
+                'type'           => 'flight',
+                'origin'         => 'Dhaka (DAC)',
+                'destination'    => 'Saidpur (SPD)',
+                'departure_time' => '04:00 PM',
+                'arrival_time'   => '05:05 PM',
+                'status'         => 'ON TIME',
+                'status_color'   => 'success',
+                'terminal'       => 'T2',
+                'gate'           => 'G08',
+                'altitude'       => 'Scheduled',
+                'speed'          => '0 km/h',
+                'price'          => 3500,
+                'seats_left'     => 18,
+                'progress_pct'   => 0,
+                'is_bookable'    => true,
+            ]
+        ];
+
+        if ($search !== '') {
+            $flights = array_values(array_filter($flights, function ($item) use ($search) {
+                return str_contains(strtolower($item['flight_number']), $search) ||
+                       str_contains(strtolower($item['airline']), $search) ||
+                       str_contains(strtolower($item['origin']), $search) ||
+                       str_contains(strtolower($item['destination']), $search) ||
+                       str_contains(strtolower($item['status']), $search);
+            }));
+        }
+
+        return response()->json([
+            'success'   => true,
+            'timestamp' => now()->format('h:i:s A'),
+            'total'     => count($flights),
+            'data'      => $flights,
+        ]);
+    }
 }

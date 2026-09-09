@@ -23,7 +23,7 @@ class BookingController extends Controller
             'phone'            => ['required', 'string', 'regex:/^(?:\+?88|01)?\d{9,11}$/'],
             'journey_date'     => 'required|date|after_or_equal:today',
             'return_date'      => 'nullable|date|after_or_equal:journey_date',
-            'transport_type'   => 'required|string|in:bus,train,tour',
+            'transport_type'   => 'required|string|in:flight,bus,train,tour',
             'seats'            => 'required|integer|min:1|max:20',
             'selected_seats'   => 'nullable|string|max:255',
             'promo_code'       => 'nullable|string|max:50',

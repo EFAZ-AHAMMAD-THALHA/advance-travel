@@ -477,17 +477,83 @@ class TravelPlatformTest extends TestCase
         // 3. Password Update with wrong current password should fail
         $badPasswordResponse = $this->actingAs($this->traveler)->put(route('profile.password'), [
             'current_password'      => 'wrongpassword',
-            'password'              => 'newpassword123',
-            'password_confirmation' => 'newpassword123',
+            'password'              => 'NewSecurePass123!',
+            'password_confirmation' => 'NewSecurePass123!',
         ]);
         $badPasswordResponse->assertSessionHasErrors('current_password');
 
-        // 4. Password Update with correct current password
+        // 4. Password Update with weak password (missing special char & uppercase) should fail
+        $weakPasswordResponse = $this->actingAs($this->traveler)->put(route('profile.password'), [
+            'current_password'      => 'password123',
+            'password'              => 'weakpass123',
+            'password_confirmation' => 'weakpass123',
+        ]);
+        $weakPasswordResponse->assertSessionHasErrors('password');
+
+        // 5. Password Update with correct current password and valid strong password
         $goodPasswordResponse = $this->actingAs($this->traveler)->put(route('profile.password'), [
             'current_password'      => 'password123',
-            'password'              => 'newsecurepass123',
-            'password_confirmation' => 'newsecurepass123',
+            'password'              => 'NewSecurePass123!',
+            'password_confirmation' => 'NewSecurePass123!',
         ]);
         $goodPasswordResponse->assertSessionHas('success');
+    }
+
+    /** 17. Test User Registration Password Validation */
+    public function test_user_registration_enforces_strong_password_rules(): void
+    {
+        // Weak password (no uppercase, no special char)
+        $responseWeak = $this->post(route('register.submit'), [
+            'name'                  => 'New User',
+            'email'                 => 'newuser@example.com',
+            'password'              => 'simple123',
+            'password_confirmation' => 'simple123',
+            'terms'                 => '1',
+        ]);
+        $responseWeak->assertSessionHasErrors('password');
+
+        // Short password (less than 8 characters)
+        $responseShort = $this->post(route('register.submit'), [
+            'name'                  => 'New User 2',
+            'email'                 => 'newuser2@example.com',
+            'password'              => 'Ab1!xyz',
+            'password_confirmation' => 'Ab1!xyz',
+            'terms'                 => '1',
+        ]);
+        $responseShort->assertSessionHasErrors('password');
+
+        // Strong compliant password
+        $responseSuccess = $this->post(route('register.submit'), [
+            'name'                  => 'New User 3',
+            'email'                 => 'newuser3@example.com',
+            'password'              => 'StrongP@ss2026',
+            'password_confirmation' => 'StrongP@ss2026',
+            'terms'                 => '1',
+        ]);
+        $responseSuccess->assertRedirect(route('home'));
+        $this->assertDatabaseHas('users', ['email' => 'newuser3@example.com']);
+    }
+
+    /** 18. Test Dynamic Live Flight Status API Endpoint */
+    public function test_live_flight_status_api_endpoint(): void
+    {
+        // 1. Fetch all live flight statuses
+        $response = $this->get('/api/flight-status');
+        $response->assertOk();
+        $response->assertJsonStructure([
+            'success',
+            'timestamp',
+            'total',
+            'data' => [
+                '*' => [
+                    'id', 'flight_number', 'airline', 'origin', 'destination', 'status', 'price'
+                ]
+            ]
+        ]);
+
+        // 2. Search specific flight code (e.g. BG-401)
+        $searchResponse = $this->get('/api/flight-status?query=BG-401');
+        $searchResponse->assertOk();
+        $searchResponse->assertJsonFragment(['flight_number' => 'BG-401']);
     }
 }

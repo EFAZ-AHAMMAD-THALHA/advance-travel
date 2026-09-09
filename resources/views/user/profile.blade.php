@@ -171,17 +171,54 @@
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label class="form-label small fw-bold">Current Password <span class="text-danger">*</span></label>
-                                <input type="password" name="current_password" class="form-control" required placeholder="Enter current password">
+                                <div class="input-group">
+                                    <input type="password" id="current_password" name="current_password" class="form-control" required placeholder="Enter current password">
+                                    <button class="btn btn-outline-secondary toggle-password-btn" type="button" data-target="current_password" title="Toggle password visibility">
+                                        <i class='bx bx-hide'></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">New Password <span class="text-danger">*</span></label>
-                                <input type="password" name="password" class="form-control" required placeholder="Min. 6 characters">
+                                <div class="input-group">
+                                    <input type="password" id="profile_new_password" name="password" class="form-control" required placeholder="Min. 8 characters" data-password-strength data-confirm-input="profile_confirm_password">
+                                    <button class="btn btn-outline-secondary toggle-password-btn" type="button" data-target="profile_new_password" title="Toggle password visibility">
+                                        <i class='bx bx-hide'></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">Confirm New Password <span class="text-danger">*</span></label>
-                                <input type="password" name="password_confirmation" class="form-control" required placeholder="Re-type new password">
+                                <div class="input-group">
+                                    <input type="password" id="profile_confirm_password" name="password_confirmation" class="form-control" required placeholder="Re-type new password">
+                                    <button class="btn btn-outline-secondary toggle-password-btn" type="button" data-target="profile_confirm_password" title="Toggle password visibility">
+                                        <i class='bx bx-hide'></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Live Password Strength Meter & Requirements -->
+                            <div class="col-12">
+                                <div class="p-3.5 bg-slate-100 rounded-3 border shadow-sm">
+                                    <div class="d-flex align-items-center mb-1.5">
+                                        <span class="small text-secondary fw-semibold">Security Score:</span>
+                                        <span class="password-strength-text small ms-auto fw-bold text-secondary">Password Required</span>
+                                    </div>
+                                    <div class="progress mb-3 rounded-pill bg-slate-200" style="height: 7px;">
+                                        <div class="progress-bar password-strength-bar bg-secondary rounded-pill" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+
+                                    <div class="row g-2 text-secondary">
+                                        <div class="col-md-4 col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="length"><i class='bx bx-circle me-1 opacity-50'></i> Min 8 characters</div></div>
+                                        <div class="col-md-4 col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="uppercase"><i class='bx bx-circle me-1 opacity-50'></i> Uppercase (A-Z)</div></div>
+                                        <div class="col-md-4 col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="lowercase"><i class='bx bx-circle me-1 opacity-50'></i> Lowercase (a-z)</div></div>
+                                        <div class="col-md-4 col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="number"><i class='bx bx-circle me-1 opacity-50'></i> Number (0-9)</div></div>
+                                        <div class="col-md-4 col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="special"><i class='bx bx-circle me-1 opacity-50'></i> Special (!@#$)</div></div>
+                                        <div class="col-md-4 col-6"><div class="password-req-chip bg-white border shadow-xs" data-req="match"><i class='bx bx-circle me-1 opacity-50'></i> Match confirmation</div></div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-12 text-end mt-4">
@@ -197,4 +234,6 @@
 
     </div>
 </div>
+
+<script src="{{ asset('js/password-validator.js') }}"></script>
 @endsection
